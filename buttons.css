@@ -1,0 +1,154 @@
+#display-tempo {
+  width: 100px;
+  height: 71px;
+}
+#display-beat {
+    font-family: 'Musical Notes';
+    font-style: normal;
+    text-transform: lowercase;
+    font-size: 20px;
+    font-weight: 700;
+}
+.beats {
+    display: inline-block;
+    width: 5px;
+    height: 40px;
+    padding: 0 9px;
+}
+.beats:after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    top: 38px;
+    display: block;
+    -moz-border-radius: 7.5px;
+    -webkit-border-radius: 7.5px;
+    border-radius: 7.5px;
+    background-color: #7c3030;
+}
+.beats.on:after {
+    background: #ff3044;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4), 0 0 5px rgba(255, 48, 68, 0.4);
+}
+
+#display-tempo p {
+    margin-top: 0;
+    line-height: 20px;
+    font-size: 30px;
+    padding-top: 15px;
+}
+#display-tempo p small {
+    font-size: 15px;
+}
+
+.display {
+    background: black;
+    color: rgba(254,85,49,.9);
+    border-radius: 5px;
+    text-shadow: 0 0 6px rgb(255, 48, 68);
+}
+
+#tap-tempo {
+  border-radius: 5px;
+  padding: 0 21px;
+  height: 34px;
+  font-size: 19px;
+  color: #5a5a5a;
+  box-shadow: inset 3px -5px 3px rgba(0, 0, 0, 0.2), inset 0 10px 10px rgba(255,255,255,.20);
+  line-height: 34px;
+}
+
+.button {
+    border-radius: 5px;
+    padding: 0 21px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 19px;
+    color: #5a5a5a;
+    box-shadow: inset 3px -5px 3px rgba(0, 0, 0, 0.2), inset 0 10px 10px rgba(255,255,255,.20);
+    background: #f2ede0;
+}
+
+#verse > span {
+    padding: 5px 20px;
+}
+
+#clear {
+  background: #828282;
+  color: #f2ede0;
+}
+
+#mute, .muted, .green {
+  background-color: #16FF98;
+  color: #5a5a5a;
+}
+
+.muted.selected {
+  -webkit-animation: pulseGreen 0.8s infinite;
+  -moz-animation: pulseGreen 0.8s infinite;
+  -ms-animation: pulseGreen 0.8s infinite;
+  -o-animation: pulseGreen 0.8s infinite;
+  animation: pulseGreen 0.8s infinite;
+}
+
+.verse.selected {
+    -webkit-animation: pulseBlue 0.8s infinite;
+    -moz-animation: pulseBlue 0.8s infinite;
+    -ms-animation: pulseBlue 0.8s infinite;
+    -o-animation: pulseBlue 0.8s infinite;
+    animation: pulseBlue 0.8s infinite;
+}
+
+.buttonclass > div {
+  margin-top: 3px;
+  margin-left: 13px;
+}
+
+
+
+#pattern-selector {
+    background: #495bfd;
+    color: #f2ede0;
+}
+
+#change-tempo {
+    width: 89px;
+    height: 89px;
+    margin: auto;
+    margin-right: 13px;
+    border: 3px solid #2D2D2D;
+    cursor: pointer;
+    background: #323131;
+    border: 3px solid #2D2D2D;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.26);
+}
+
+#change-tempo::before {
+  content: " ";
+  position: absolute;
+  margin-left: -2px;
+  width: 3px; height: 8px;
+  background: #ff3044;
+  border-radius: 0 0 2px 2px;
+  -moz-border-radius: 0 0 2px 2px;
+  -webkit-border-radius: 0 0 2px 2px;
+}
+
+#action div > div:first-child, #titles div > div:first-child {
+    margin-top: 0;
+}
+
+#action div > div, #tap-tempo {
+    margin-top: 3px;
+}
+
+#titles div > div {
+    height: 34px;
+    text-align: left;
+    line-height: 34px;
+    margin-top: 3px;
+}

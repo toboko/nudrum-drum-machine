@@ -1,0 +1,259 @@
+@font-face {
+    font-family: 'Musical Notes';
+    src: url('./font/musical-notes/musical-notes.eot');
+    src: url('./font/musical-notes/musical-notes.eot?#iefix') format('embedded-opentype'),
+    url('./font/musical-notes/musical-notes.woff2') format('woff2'),
+    url('./font/musical-notes/musical-notes.woff') format('woff'),
+    url('./font/musical-notes/musical-notes.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+body {
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Roboto', sans-serif;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;
+    min-height: 96vh;
+}
+
+section {
+    padding: 0 13px;
+    -moz-border-radius: 13px;
+    -webkit-border-radius: 13px;
+    border-radius: 13px;
+}
+
+p {
+    font-weight: 100;
+    font-size: 14px;
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+.texture1 {
+    background-image: url("./img/texture-01.png");
+    background-size: 20px;
+}
+
+#body-machine {
+    display: none;
+    position: absolute;
+    width: 1024px;
+    height: 700px;
+    background-color: grey;
+    margin: auto;
+    right: 0; left: 0; bottom: 0; top: 0;
+}
+
+#body-machine, .bracket {
+    box-shadow: inset 3px -30px 13px rgba(0, 0, 0, 0.2), inset 0 10px 10px rgba(255,255,255,.20);
+}
+
+#section-tools {
+    padding: 55px 34px 89px;
+}
+
+#section-knobs {
+    display: inline-flex;
+    margin-bottom: 21px;
+}
+
+#section-buttons {
+    display: inline-flex;
+    position: relative;
+    margin-bottom: 21px;
+}
+
+#section-steps {
+    display: inline-flex;
+    height: 89px;
+    width: 90%;
+    bottom: 2px;
+    padding: 21px 21px;
+    background-color: #999da0;
+}
+
+#section-buttons > div {
+    margin-right: 13px;
+    display: inline-flex;
+}
+
+#section-steps > div {
+    position: relative;
+    display: inline-flex;
+    border-radius: 5px;
+    margin: auto 3px;
+    width: 55px;
+    height: 89px;
+    box-shadow: inset 3px -5px 3px rgba(0, 0, 0, 0.2), inset 0 10px 10px rgba(255,255,255,.20);
+    border-right: 2px solid rgba(87,87,87,.05);
+}
+
+#section-steps > div.step.clock {
+    background: #fff;
+}
+
+#section-steps > div.step::before {
+    content: '';
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    margin: auto;
+    margin-top: 13px;
+    -moz-border-radius: 7.5px;
+    -webkit-border-radius: 7.5px;
+    border-radius: 7.5px;
+    background-color: #7c3030;
+}
+
+#section-steps > div.step::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    margin: auto;
+    right: 0;
+    left: 0;
+    margin-top: 37px;
+    border-bottom: 2px solid transparent;
+    box-shadow: 0 1px 5px rgb(0, 0, 0);
+
+}
+
+#section-steps > div.step.on::before {
+    background: #ff3044;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4), 0 0 5px rgba(255, 48, 68, 0.4);
+
+}
+
+.step, .label, .button, .knob, .beats {
+    -webkit-transition: all 0.15s cubic-bezier(.19, 1, .22, 1);
+    -moz-transition: all 0.15s cubic-bezier(.19, 1, .22, 1);
+    -ms-transition: all 0.15s cubic-bezier(.19, 1, .22, 1);
+    -o-transition: all 0.15s cubic-bezier(.19, 1, .22, 1);
+    transition: all 0.15s cubic-bezier(.19, 1, .22, 1);
+    cursor: pointer;
+}
+
+.step:active, .label:active, .button:active {
+    -webkit-transform: scale(0.97);
+    -moz-transform: scale(0.97);
+    -ms-transform: scale(0.97);
+    -o-transform: scale(0.97);
+    transform: scale(0.97);
+}
+
+.bracket {
+    position: absolute;
+    width: 34px;
+    height: 100%;
+    background-color: #3c3c3c;
+}
+
+.bracket.left {
+    border-top-left-radius: 13px;
+    border-bottom-left-radius: 13px;
+}
+.bracket.right {
+    border-top-right-radius: 13px;
+    border-bottom-right-radius: 13px;
+}
+
+.right {
+    right: 0;
+}
+
+.left {
+    left: 0;
+}
+
+.white {
+    background-color: #f2ede0;
+}
+
+@-webkit-keyframes pulseGreen {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {background-color: #16FF98;color: #5a5a5a;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+}
+@-moz-keyframes pulseGreen {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {background-color: #16FF98;color: #5a5a5a;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+}
+@-ms-keyframes pulseGreen {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {background-color: #16FF98;color: #5a5a5a;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+}
+@-o-keyframes pulseGreen {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {background-color: #16FF98;color: #5a5a5a;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+
+}
+@keyframes pulseGreen {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {background-color: #16FF98;color: #5a5a5a;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+}
+
+
+@-webkit-keyframes pulseWhite {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {  background: rgb(242, 237, 224) ;color: black;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+}
+@-moz-keyframes pulseWhite {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {  background: rgb(242, 237, 224) ;color: black;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+}
+@-ms-keyframes pulseWhite {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {  background: rgb(242, 237, 224) ;color: black;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+}
+@-o-keyframes pulseWhite {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {  background: rgb(242, 237, 224) ;color: black;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+
+}
+@keyframes pulseWhite {
+    from {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+    50% {  background: rgb(242, 237, 224) ;color: black;}
+    to {background: rgb(128, 128, 128);color: rgba(255,255,255,.7);}
+}
+
+@-webkit-keyframes pulseBlue {
+    from {background: #f2ede0; color: #5a5a5a;}
+    50% { background: #495bfd; color: #f2ede0;}
+    to {background: #f2ede0; color: #5a5a5a;}
+}
+@-moz-keyframes pulseBlue {
+    from {background: #f2ede0; color: #5a5a5a;}
+    50% { background: #495bfd; color: #f2ede0;}
+    to {background: #f2ede0; color: #5a5a5a;}
+}
+@-ms-keyframes pulseBlue {
+    from {background: #f2ede0; color: #5a5a5a;}
+    50% { background: #495bfd; color: #f2ede0;}
+    to {background: #f2ede0; color: #5a5a5a;}
+}
+@-o-keyframes pulseBlue {
+    from {background: #f2ede0; color: #5a5a5a;}
+    50% { background: #495bfd; color: #f2ede0;}
+    to {background: #f2ede0; color: #5a5a5a;}
+
+}
+@keyframes pulseBlue {
+    from {background: #f2ede0; color: #5a5a5a;}
+    50% { background: #495bfd; color: #f2ede0;}
+    to {background: #f2ede0; color: #5a5a5a;}
+}

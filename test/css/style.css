@@ -1,0 +1,199 @@
+@font-face {
+    font-family: 'HK Grotesk';
+    src: url('font/hk-grotesk/HKGrotesk-Regular.woff2') format('woff2'),
+    url('font/hk-grotesk/HKGrotesk-Regular.woff') format('woff'),
+    url('font/hk-grotesk/HKGrotesk-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+  font-family: 'HK Grotesk', Verdana, Geneva, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -moz-font-smoothing: grayscale;
+}
+i {
+  cursor: pointer;
+}
+
+.blue {
+  color: #495bfd;
+}
+.green {
+  color: #0ad18b;
+}
+.white {
+  color: #ffffff;
+}
+.black {
+  color: #000000;
+}
+.white-button {
+  background: #ffffff;
+  border: 2px solid black;
+  border-radius: 3px;
+  margin: auto;
+}
+
+.button-step {
+  display: inline-block;
+  position: relative;
+  width: 55px;
+  height: 89px;
+  background: #495bfd;
+  margin: 0 2px;
+  border: 2px solid black;
+  border-radius: 3px
+}
+.button-step span {
+  position: absolute;
+  top: 50%; bottom: 0; right: 0; left: 0;
+  text-align: center;
+  margin: auto;
+  color: #ffffff;
+}
+.button-step.select {
+  background: #ffffff !important;
+}
+.button-step.select span {
+  color: #495bfd;
+}
+.button-step.clock {
+  background: #0ad18b;
+}
+.button-step.disabled {
+  cursor: not-allowed;
+  opacity: 0.05;
+}
+.line-steps {
+  height: 93px;
+  margin-bottom: 3px;
+  width: 1070px;
+}
+.line-sets {
+  position: fixed;
+  width: 300px;
+  z-index: 1;
+  left: 0;
+}
+.line-set {
+  display: grid;
+  width: 100%;
+  height: 89px;
+  margin-bottom: 3px;
+  text-align: center;
+  align-content: center;
+  background: #ffffff;
+  border-top: 2px solid #000000;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  transform: translateX(-220px);
+
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-areas:
+    "a a b b c c d d";
+    transition: 200ms linear
+}
+.line-set > div {
+  position: relative;
+  margin: auto;
+  align-content: center;
+}
+.line-set > div p {
+  margin: 0;
+}
+.line-set > div .value {
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+.line-set > div .title {
+  position: absolute;
+  transform: rotate(90deg) translateX(-10px);
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 200%;
+
+}
+.line-set.select {
+  transform: translateX(0);
+}
+.line-set .volume {
+  grid-area: a;
+}
+.line-set .offset {
+  grid-area: b;
+}
+.line-set .beat {
+  grid-area: c;
+}
+.line-set .label {
+  grid-area: d;
+}
+.line-set .label p {
+  margin: 0;
+}
+.line-set .fa-cog{
+  margin-top: 8px;
+}
+.line-insts {
+  transform: translateX(80px);
+}
+#main-area {
+  overflow: scroll;
+  display: inline-flex;
+}
+#control-area {
+  width: 500px;
+  text-align: center;
+}
+#line-tempo {
+  margin-bottom: 34px;
+}
+#line-tempo .title {
+  width: 89px;
+  margin-bottom: 3px;
+}
+.tap {
+  width: 89px;
+  height: 55px;
+}
+#line-file {
+  display: inline-flex;
+}
+#line-file div:first-child {
+  margin-right: 3px;
+}
+#line-file > div {
+  width: 89px;
+  height: 55px;
+}
+#line-verse {
+  display: inline-flex;
+  margin-bottom: 3px;
+}
+.verse {
+  width: 56px;
+  height: 56px;
+}
+.verse:first-child {
+  margin-right: 3px;
+}
+.verse:last-child {
+  margin-left: 3px;
+}
+#play {
+  width: 183px;
+  height: 56px;
+}
+
+#window {
+  display: inline-flex;
+  align-items: center;
+}
+@media only screen and (max-width: 2000px) {
+    #main-area {
+        width: 1150px;
+    }
+}
