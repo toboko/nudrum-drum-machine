@@ -66,26 +66,29 @@ i, .button-step, .white-button {
   background: #ffffff;
   margin: 0 2px;
   border: 2px solid black;
-  border-radius: 3px
+  border-radius: 3px;
+    -webkit-transition: 250ms width;
+    -moz-transition: 250ms width;
+    -ms-transition: 250ms width;
+    -o-transition: 250ms width;
+    transition: 250ms width;
 }
-.button-step span {
+.button-step .number {
   position: absolute;
   top: 50%; bottom: 0; right: 0; left: 0;
   text-align: center;
   margin: auto;
   color: #495bfd;;
 }
+
+.button-step.clock {
+    background: #0ad18b;
+}
 .button-step.select {
   background: #495bfd;
 }
 .button-step.select span {
   color: #ffffff;
-}
-.button-step.clock {
-  background: #0ad18b;
-}
-.button-step.select.clock {
-  background: #ff253a;
 }
 .button-step.disabled {
   cursor: not-allowed;
@@ -97,6 +100,7 @@ i, .button-step, .white-button {
     margin-bottom: 3px;
     text-align: left;
     width: 1088px;
+
 }
 .line-sets {
   position: absolute;
@@ -209,20 +213,6 @@ i, .button-step, .white-button {
 #line-file > div {
   width: 89px;
   height: 55px;
-}
-#line-verse {
-  display: inline-flex;
-  margin-bottom: 3px;
-}
-.verse {
-  width: 56px;
-  height: 56px;
-}
-.verse:first-child {
-  margin-right: 3px;
-}
-.verse:last-child {
-  margin-left: 3px;
 }
 #play {
   width: 183px;

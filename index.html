@@ -3,18 +3,18 @@
 <head>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/jquery-3.3.1.min.js"></script>
-  <script src="js/md5.min.js"></script>
-  <script src="js/pizzicato.min.js"></script>
-  <script src="js/angular.min.js"></script>
+  <script src="js/lib/jquery-3.3.1.min.js"></script>
+  <script src="js/lib/md5.min.js"></script>
+  <script src="js/lib/pizzicato.min.js"></script>
+  <script src="js/lib/angular.min.js"></script>
   <meta charset="utf-8">
-  <title></title>
+  <title>NuDrum</title>
 </head>
 <body data-ng-controller="DmController as d">
 <div id="surface">
   <div id="window">
     <div id="main-area">
-      <div class="line-sets">
+        <div class="line-sets">
         <div  data-ng-repeat="instrument in d.instruments" id="set-{{$index}}"
               class="line-set">
           <div class="volume">
@@ -26,13 +26,13 @@
           <div class="offset">
             <p class="title">offset</p>
             <i class="fas fa-arrow-up" data-ng-click="setOffset($index, true)"></i>
-            <p class="value">{{d.patterns[0].verse[d.verseSelected][$index].view.y}}</p>
+            <p class="value">{{d.pattern[$index].view}}</p>
             <i class="fas fa-arrow-down" data-ng-click="setOffset($index, false)"></i>
           </div>
           <div class="beat">
             <p class="title">beat</p>
             <i class="fas fa-arrow-up" data-ng-click="setBeat($index, true)"></i>
-            <p class="value">{{d.patterns[0].verse[d.verseSelected][$index].beat.text}}</p>
+            <p class="value">{{d.pattern[$index].beat.text}}</p>
             <i class="fas fa-arrow-down" data-ng-click="setBeat($index, false)"></i>
           </div>
           <div class="label">
@@ -42,13 +42,14 @@
       </div>
       <div class="line-insts">
         <div id="inst-{{$index}}" class="line-inst"
-             data-ng-repeat="set in d.patterns[0].verse[d.verseSelected]">
+             data-ng-repeat="set in d.pattern">
           <div class="line-steps">
-            <div  data-ng-repeat="step in set.matrix track by $index"
+            <div  data-ng-repeat="step in set.steps track by $index"
                   data-ng-click="selectStep(set.id, $index)"
                   id="step-{{$index + 1}}"
-                  class="button-step beat-8">
-              <span>{{$index + 1}}</span>
+                  class="button-step beat-8"
+                  on-last-repeat>
+              <span class="number">{{$index + 1}}</span>
             </div>
           </div>
         </div>
@@ -79,21 +80,10 @@
           <p>Save</p>
         </div>
       </div>
-      <p>Verse</p>
+      <hr/>
       <div id="line-play">
-        <div id="line-verse">
-          <div id="verse-0" class="verse white-button" data-ng-click="changeVerse(0)">
-            <p>A</p>
-          </div>
-          <div id="verse-1" class="verse white-button" data-ng-click="changeVerse(1)">
-            <p>B</p>
-          </div>
-          <div id="verse-2" class="verse white-button" data-ng-click="changeVerse(2)">
-            <p>C</p>
-          </div>
-        </div>
         <div id="play" class="white-button" data-ng-click="startLoop()">
-          <p>{{d.statusText}}</p>
+          <p>{{d.plyTxt}}</p>
         </div>
       </div>
     </div>
@@ -101,9 +91,7 @@
   </div>
   <div id="update-area"></div>
 </div>
+<script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+<script src="js/component.js?v=7"></script>
 </body>
 </html>
-<!-- Firebase App is always required and must be first -->
-<script src="https://www.gstatic.com/firebasejs/5.5.7/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/5.5.7/firebase-database.js"></script>
-<script src="component.js"></script>
