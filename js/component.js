@@ -1,3 +1,6 @@
+toastr.options.progressBar = true;
+toastr.options.closeButton = true;
+
 randomCharacter = function() {
   let possible = "abcdefghijklmnopqrstuvwxyz0123456789";
   return possible[Math.floor(Math.random() * possible.length)];
@@ -75,7 +78,6 @@ Attack doesn't work after the first playback of a sound (Chrome)
 app.controller("DmController", function($scope, $compile) {
   const d = this;
 
-
   // Initialize Firebase
   var config = {
     apiKey: "AIzaSyBt_VQC9YWeaP0fOgfGTjssYV706d4nvlo",
@@ -88,11 +90,34 @@ app.controller("DmController", function($scope, $compile) {
 
   firebase.initializeApp(config);
 
+  d.storage = firebase.storage();
+
   d.db = firebase.database();
-  d.db
-    .ref("patterns/")
-    .orderByChild("when")
-    .on("value", data => {
+
+  // On load update latest samples link
+  // TODO: Save this in cache. If not exists download over firebase
+  d.db.ref("samples/").on("value", data => {
+    if (data.exists()) {
+      let ones = true;
+      let types = Object.entries(data.val());
+      types.forEach(function (type) {
+        $("#inst-sound-type").append('<optgroup id="group-' + type[0] + '" label="' + type[0] + '"></optgroup>');
+        let elements = Object.entries(type[1]);
+        elements.forEach(function (element) {
+          if (ones) {
+            $('#group-' + type[0]).append('<option selected="selected" name="' + element[0] + '" value="' + type[0] + '/' + element[0] + '.wav' + '">'+ type[0] + ' ' + element[0] + '</option>');
+            ones = false;
+          } else {
+            $('#group-' + type[0]).append('<option name="' + element[0] + '" value="' + type[0] + '/' + element[0] + '.wav' + '">'+ type[0] + ' ' + element[0] + '</option>');
+
+          }
+        })
+      });
+    }
+  });
+
+  // On load update latest pattern uploaded
+  d.db.ref("patterns/").orderByChild("when").on("value", data => {
       updateArea = $("#update-area");
       updateArea.empty();
       if (data.exists()) {
@@ -181,85 +206,112 @@ app.controller("DmController", function($scope, $compile) {
     32: { id: 32, offset:64, text: "1/32", rate: 1, ms: 7500 }
   };
 
-  d.tuning = { index: null, item: null, mouse: { init: null, mod: null }, value: { init: null, mod: null } };
-  d.mixing = { index: null, item: null, mouse: { init: null, mod: null }, value: { init: null, mod: null } };
-  d.tempoS = { item: null, mouse: { init: null, mod: null }, value: { init: null, mod: null }, initRotation: null };
-
-  $scope.loadAudio = function(path) {
-    return (sound = new Pizzicato.Sound({
-      source: "file",
-      options: {
-        path: path,
-        attack: 0,
-        sustain: 0,
-        release: 0.4
-      }
-    }));
-  };
+  d.defSamples = [
+    "Kick/Classic.wav",
+    "Snare/Classic.wav",
+    "Tom/ClassicMid.wav",
+    "Rim/Classic.wav",
+    "HitHat/ClassicClose.wav",
+    "Crash/Classic.wav",
+  ];
 
   //    [row]     [columns]
   // instruments    beats
   d.pattern = Array(
-    { id: 0, clock: 1, view: 3, ended: false, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0] },
-    { id: 1, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { id: 2, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { id: 3, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { id: 4, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { id: 5, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+    { id: 0, inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 3, ended: false, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0] },
+    { id: 1, inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { id: 2, inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 32, ended: false, cycle: 0, beat: d.beat[16], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { id: 3, inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 64, ended: false, cycle: 0, beat: d.beat[32], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { id: 4, inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { id: 5, inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
   );
 
-  d.instruments = Array(
-    { text: "Bass Drum", mute: false, vol: 5, audio: $scope.loadAudio("./Audio/808/Kick/808-Kick.wav") },
-    { text: "Snare Drum", mute: false, vol: 5, audio: $scope.loadAudio("./Audio/808/Snare/808-Snare.wav") },
-    { text: "Mid Tom", mute: false, vol: 5, audio: $scope.loadAudio("./Audio/808/Tom/808-MidTom.wav") },
-    { text: "Rim Shot", mute: false, vol: 5, audio: $scope.loadAudio("./Audio/808/Rim/808-Rim.wav") },
-    { text: "Closed Hihat", mute: false, vol: 5, audio: $scope.loadAudio("./Audio/808/HitHat/808-ClosedHitHat.wav") },
-    { text: "Crash Cymbal", mute: false, vol: 5, audio: $scope.loadAudio("./Audio/808/Crash/808-Crash.wav") }
-  );
+	d.newpattern = {
+	  id: d.pattern.length, inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+	};
+
+	$scope.loadSample = function(sample, inst) {
+		d.storage.ref(sample).getDownloadURL().then(function (url) {
+			d.pattern[inst].inst.audio = (new Pizzicato.Sound({
+				source: "file",
+				options: {
+					path: url,
+					attack: 0,
+					release: 0.4
+				}
+			}));
+
+			// Remove blur on loading
+			let filterVal = 'blur(0px)';
+			$('#set-' + inst + ' > p')
+				.css('filter',filterVal)
+				.css('webkitFilter',filterVal)
+				.css('mozFilter',filterVal)
+				.css('oFilter',filterVal)
+				.css('msFilter',filterVal)
+				.css('pointer-events', 'visible');
+			$("#inst-" + inst + " .line-steps")
+				.css('filter',filterVal)
+				.css('webkitFilter',filterVal)
+				.css('mozFilter',filterVal)
+				.css('oFilter',filterVal)
+				.css('msFilter',filterVal)
+				.css('pointer-events', 'visible');
+		});
+	};
+
+	$scope.loadAllSample = function() {
+		d.defSamples.forEach(function (value, index) {
+			$scope.loadSample(value, index);
+		})
+	};
 
   $(document).ready(function() {
     // usefull in the future
-    let c = Pizzicato.context;
-    let analyser = c.createAnalyser();
-    d.instruments.forEach(function(value) {
-      value.audio.connect(analyser);
-    });
+    // let c = Pizzicato.context;
+    // let analyser = c.createAnalyser();
+    // d.instruments.forEach(function(value) {
+    //   value.audio.connect(analyser);
+    // });
 
-    $(window).resize(function() {
-      if ($(window).width() < 1542) {
-        $("#main-area").width(
-          $(window).width() - ($("#control-area").width() + 23)
-        );
-      }
-    });
-
+    // $(window).resize(function() {
+    //   if ($(window).width() < 1542) {
+    //     $("#main-area").width(
+    //       $(window).width() - ($("#control-area").width() + 23)
+    //     );
+    //   }
+    // });
     $(window).trigger("resize");
 
-    $(document).on("click touchend", ".fa-cog, .fa-times", function() {
+    $(document).on("click touchend", ".fa-edit, .fa-times", function() {
       item = $(this).parent().parent().parent();
       times = document.querySelectorAll(".fa-times");
-      if ($(this).hasClass("fa-cog") && times.length >= 1) {
+      if ($(this).hasClass("fa-edit") && times.length >= 1) {
         $(".line-set").removeClass("select");
         times.forEach(function(value) {
           value.classList.remove("fa-times");
-          value.classList.add("fa-cog");
+          value.classList.add("fa-edit");
         });
       }
       if (item[0].classList.toggle("select")) {
-        $(this).removeClass(["fa-cog", "fa"]).addClass(["fa-times", "fa"]);
+        $(this).removeClass(["fa-edit", "fa"]).addClass(["fa-times", "fa"]);
       } else {
-        $(this).removeClass(["fa-times", "fa"]).addClass(["fa-cog", "fa"]);
+        $(this).removeClass(["fa-times", "fa"]).addClass(["fa-edit", "fa"]);
       }
     });
 
     loadPat = findGetParameter("p");
     if (loadPat !== null) {
       $scope.load(loadPat);
+    } else {
+      $scope.loadAllSample();
     }
 
     // Display visualization
     $("body").fadeIn("slow");
+
   });
+
 
   /**  TEMPO functions
    *
@@ -305,75 +357,92 @@ app.controller("DmController", function($scope, $compile) {
     $scope.setTempo(xT);
   };
 
-  $scope.setBeat = function(inst, inc) {
+  $scope.setBeat = function(inc, inst) {
     let flupt   = false;
-    let oldbeat = d.pattern[inst].beat.id;
+    let oldbeat = (typeof inst !== 'undefined') ? d.pattern[inst].beat.id : d.newpattern.beat.id;
     let newbeat = oldbeat;
     // Controls on new beat
     newbeat = inc ? newbeat * 2 : newbeat / 2;
     newbeat = newbeat === 2 ? 32 : newbeat;
     newbeat = newbeat === 64 ? 4 : newbeat;
-    // New Beat
-    d.pattern[inst].beat = d.beat[newbeat];
 
     // Add or reduce steps
-    let newoffset = d.pattern[inst].beat.offset;
+    let newoffset = d.beat[newbeat].offset;
     // Create temp array replacing the old one
     let tempsteps = Array(newoffset).fill(0);
 
-    // Shift active steps
-    d.pattern[inst].steps.forEach(function (val, index, array) {
-      let i2, distance = 0;
+    if (typeof inst !== 'undefined') {
+      // Shift active steps
+      d.pattern[inst].steps.forEach(function (val, index, array) {
+        let i2, distance = 0;
 
-      if (newbeat > oldbeat) {
-        // If we are increasing the beat speed
-        distance = (newbeat/oldbeat);
-        i2 = index*distance;
-        tempsteps[i2] = (array[index] === 1) ? 1 : 0;
+        if (newbeat > oldbeat) {
+          // If we are increasing the beat speed
+          distance = (newbeat/oldbeat);
+          i2 = index*distance;
+          tempsteps[i2] = (array[index] === 1) ? 1 : 0;
 
-      } else {
-        // If we are reducing the beat speed
-        flupt = true;
-
-        distance = (oldbeat/newbeat);
-        i2 = (index%distance) ? (index-1)/distance : index/distance;
-        if (array[index] && tempsteps[i2] === 0) {
-          tempsteps[i2] = 1;
+        } else {
+          flupt = true;
+          // If we are reducing the beat speed
+          distance = (oldbeat/newbeat);
+          i2 = (index%distance) ? (index-1)/distance : index/distance;
+          if (array[index] && tempsteps[i2] === 0) {
+            tempsteps[i2] = 1;
+          }
         }
-      }
-    });
+      });
 
-    // Update Matrix
-    d.pattern[inst].steps = tempsteps;
-    // New offset
-    d.pattern[inst].view = newoffset;
-    // Update Inst Clock
-    d.pattern[inst].clock = norm(Math.ceil(idxClk / d.pattern[inst].beat.rate), d.pattern[inst].beat.offset);
-    fxIdClk.state = true;
-    fxIdClk.inst  = inst;
+      // New Beat
+      d.pattern[inst].beat = d.beat[newbeat];
+      // Update Matrix
+      d.pattern[inst].steps = tempsteps;
+      // New offset
+      d.pattern[inst].view = (d.pattern[inst].view > newoffset) ? newoffset : d.pattern[inst].view;
+      // Update Inst Clock
+      d.pattern[inst].clock = norm(Math.ceil(idxClk / d.pattern[inst].beat.rate), d.pattern[inst].beat.offset);
+      fxIdClk.state = true;
+      fxIdClk.inst  = inst;
 
-    $scope.resetSteps(d.pattern[inst]);
-    $scope.upClock(inst, d.pattern[inst].clock);
+      $scope.resetSteps(d.pattern[inst]);
+      $scope.upClock(inst, d.pattern[inst].clock);
 
-    if (flupt) updateSteps(inst);
+      if (flupt) updateSteps(inst);
 
+    } else {
+      // New Beat
+      d.newpattern.beat = d.beat[newbeat];
+      // Update Matrix
+      d.newpattern.steps = tempsteps;
+      // New offset
+      d.newpattern.view = newoffset;
+    }
   };
 
-  $scope.setOffset = function(inst, inc) {
-    let newoffset = d.pattern[inst].view;
-    let maxOffset = d.pattern[inst].beat.offset;
+  $scope.setOffset = function(inc, inst) {
+
+    let newoffset = (typeof inst !== 'undefined') ? d.pattern[inst].view : d.newpattern.view;
+    let maxoffset = (typeof inst !== 'undefined') ? d.pattern[inst].beat.offset : d.newpattern.beat.offset;
 
     newoffset = inc ? (newoffset += 1) : (newoffset -= 1);
     newoffset = newoffset < 1 ? 1 : newoffset;
-    newoffset = newoffset > maxOffset ? maxOffset : newoffset;
-    if (newoffset <= maxOffset) {
-      $("#inst-" + inst + " div.line-steps .button-step").removeClass("disabled");
+    newoffset = newoffset > maxoffset ? maxoffset : newoffset;
 
-      for (var i = newoffset + 1; i <= maxOffset; i++) {
-        $("#inst-" + inst + " div.line-steps #step-" + i).addClass("disabled");
+    if (typeof inst !== 'undefined') {
+
+      if (newoffset <= maxoffset) {
+        $("#inst-" + inst + " div.line-steps .button-step").removeClass("disabled");
+
+        for (var i = newoffset + 1; i <= maxoffset; i++) {
+          $("#inst-" + inst + " div.line-steps #step-" + i).addClass("disabled");
+        }
       }
+      d.pattern[inst].view = newoffset;
+
+    } else {
+
+      d.newpattern.view = newoffset;
     }
-    d.pattern[inst].view = newoffset;
   };
 
   $scope.setVolume = function(index, inc) {
@@ -381,27 +450,31 @@ app.controller("DmController", function($scope, $compile) {
     newvol = inc ? (newvol += 1) : (newvol -= 1);
     newvol = newvol <= 0 ? 0 : newvol;
     newvol = newvol >= 10 ? 10 : newvol;
-    d.instruments[index].vol = newvol;
+    d.pattern[index].inst.vol = newvol;
 
-    if (d.instruments[index].mute) {
-      d.instruments[index].audio.volume = 0;
+    if (d.pattern[index].inst.mute) {
+      d.pattern[index].inst.audio.volume = 0;
     } else {
-      d.instruments[index].audio.volume = newvol / MAXVOLUME;
+      d.pattern[index].inst.audio.volume = newvol / MAXVOLUME;
     }
   };
 
   $scope.save = function() {
     let id = short();
-    // copy verseSelected
-    verse = JSON.parse(JSON.stringify(d.pattern));
-    // normalize the verse setting every clock to 0
-    verse.forEach(function(value) {
+    // copy pattern
+    let pattern = JSON.parse(JSON.stringify(d.pattern));
+    // normalize the pattern
+    // - clock to 0
+    // - audio to null
+    pattern.forEach(function(value) {
       value.clock = 1;
+      value.inst.audio = null
     });
+	  pattern = JSON.stringify(pattern);
 
-    let file = JSON.stringify(verse);
+	  let samples = JSON.stringify(d.defSamples);
     let when = Date.now();
-    let hash = md5(file);
+    let hash = md5(pattern);
 
     // check if there is duplicated pattern
     d.db
@@ -416,17 +489,18 @@ app.controller("DmController", function($scope, $compile) {
               id: id,
               hash: hash,
               when: when,
-              json: file,
+              pattern: pattern,
+              samples: samples,
               star: 0,
               title: "Example"
             },
             function(error) {
               if (error) {
-                console.log(error)
-                // The write failed...
+	              // The write failed...
+	              toastr.error('error', 'Error!');
               } else {
-                console.log('ok')
-                // Data saved successfully!
+	              // Data saved successfully!
+	              toastr.success('Pattern uploaded with id <strong>' + id + '</strong>', 'Success');
               }
             }
           );
@@ -435,12 +509,17 @@ app.controller("DmController", function($scope, $compile) {
       });
   };
 
+
+
   $scope.load = function(key) {
     d.db.ref("patterns/" + key).on("value", snapshot => {
       if (snapshot.exists()) {
         // Data read successfully!
         let data = snapshot.val();
-        d.pattern = JSON.parse(data.json);
+        d.pattern = JSON.parse(data.pattern);
+        d.defSamples = JSON.parse(data.samples);
+
+        $scope.loadAllSample();
         $scope.resetClock();
         updateSteps();
       } else {
@@ -455,16 +534,14 @@ app.controller("DmController", function($scope, $compile) {
    *
    * **/
 
-  $scope.selectStep = function(instN, step) {
-    let item = $("#inst-" + instN + " div.line-steps #step-" + (step+1));
-    d.pattern[instN].steps[step] = item[0].classList.toggle("select") ? 1 : 0;
+  $scope.selectStep = function(inst, step) {
+    let item = $("#inst-" + inst + " div.line-steps #step-" + (step+1));
+    d.pattern[inst].steps[step] = item[0].classList.toggle("select") ? 1 : 0;
   };
 
-  $scope.clear = function() {
-    d.pattern.forEach(function(value) {
-      value.steps[d.trackSelected] = 0;
-    });
-    $scope.selectStep(d.trackSelected);
+  $scope.clear = function(inst) {
+	  d.pattern[inst].steps.forEach(function(value, index, array) { array[index] = 0; });
+	  updateSteps(inst);
   };
 
   /**  MIX functions
@@ -474,15 +551,20 @@ app.controller("DmController", function($scope, $compile) {
    * **/
 
   $scope.checkMix = function() {
-    d.instruments.forEach(function(value) {
-      if (value.audio != null && !value.mute)
-        value.audio.volume = value.vol / MAXVOLUME;
+    d.pattern.forEach(function(value) {
+      if (value.inst.audio != null && !value.mute)
+        value.inst.audio.volume = value.vol / MAXVOLUME;
     });
   };
 
-  $scope.mute = function() {
-    d.instruments[d.trackSelected].mute = !d.instruments[d.trackSelected].mute;
-    d.instruments[d.trackSelected].audio.volume = d.instruments[d.trackSelected].mute ? 0.0 : d.instruments[d.trackSelected].vol / 100;
+  $scope.mute = function(inst) {
+    d.pattern[inst].inst.mute = !d.pattern[inst].inst.mute;
+    d.pattern[inst].inst.audio.volume = d.pattern[inst].inst.mute ? 0.0 : d.pattern[inst].inst.vol / 10;
+    if (d.pattern[inst].inst.mute) {
+	    $('#set-' + inst + ' .mute').html('<i class="fas fa-volume-mute"></i>')
+    } else {
+	    $('#set-' + inst + ' .mute').html('<i class="fas fa-volume-up"></i>')
+    }
   };
 
   /**  PLAYING functions
@@ -539,13 +621,13 @@ app.controller("DmController", function($scope, $compile) {
 
   $scope.play = function() {
     // playing sounds
-    d.instruments.forEach(function(value, inst) {
+    d.pattern.forEach(function(value, inst) {
 
       // clock is in time with beat rate
-      if ( idxClk % d.pattern[inst].beat.rate === 1) {
+      if ( idxClk % value.beat.rate === 1) {
         $scope.playInst(inst, d.pattern[inst]);
 
-      } else if(d.pattern[inst].beat.rate === 1) {
+      } else if(value.beat.rate === 1) {
         $scope.playInst(inst, d.pattern[inst]);
       }
     });
@@ -567,42 +649,48 @@ app.controller("DmController", function($scope, $compile) {
     // calculate the points of view
 
     if (element.steps[element.clock - 1]) {
-      if (d.instruments[inst].audio.playing) {
-        d.instruments[inst].audio.stop();
+      if (d.pattern[inst].inst.audio.playing) {
+        d.pattern[inst].inst.audio.stop();
       }
       // Play sample
-      d.instruments[inst].audio.play();
+      d.pattern[inst].inst.audio.play();
     }
 
     if (element.ended && (offset !== beat)) {
 
-      let fstep = $("#inst-" + inst + " #step-1");
+      //let fstep = $("#inst-" + inst + " #step-1");
 
-      // Shift elements
-        fstep.animate(
-          { marginLeft : fstep.width() * element.view},
-          {
-            duration: d.beat[32].ms / d.tempo,
-            start: function () {
-              for (var x = 0; x < element.view; x++) {
-                let line = $("#inst-" + inst + " .button-step");
+	    for (let x = element.beat.offset; x > (element.beat.offset - element.view); x--) {
+		    let line = $("#inst-" + inst + " .button-step");
+		    $("#inst-" + inst + " .line-steps").prepend(line.last());
+	    }
 
-                line.last().hide();
-                $("#inst-" + inst + " .line-steps").prepend(line.last());
-              }
-
-            },
-            complete: function () {
-              let line = $("#inst-" + inst + " .button-step");
-
-              $("#inst-" + inst + " #step-1").removeAttr("style");
-              for (var x = 0; x < element.view; x++) {
-                $(line[x]).show()
-              }
-            }
-        });
+      // Shift elements animation
+      //   fstep.animate(
+      //     { marginLeft : fstep.width() * element.view},
+      //     {
+      //       duration: d.beat[32].ms / d.tempo,
+      //       start: function () {
+      //         for (var x = 0; x < element.view; x++) {
+      //           let line = $("#inst-" + inst + " .button-step");
+      //
+      //           line.last().hide();
+      //           $("#inst-" + inst + " .line-steps").prepend(line.last());
+      //         }
+      //
+      //       },
+      //       complete: function () {
+      //         let line = $("#inst-" + inst + " .button-step");
+      //
+      //         $("#inst-" + inst + " #step-1").removeAttr("style");
+      //         for (var x = 0; x < element.view; x++) {
+      //           $(line[x]).show()
+      //         }
+      //       }
+      //   });
         element.ended = false;
     }
+
 
     // select clock step on instrument line steps
     $scope.upClock(inst, element.clock);
@@ -623,6 +711,27 @@ app.controller("DmController", function($scope, $compile) {
     }
   };
 
+
+  $scope.newInst = function () {
+	  let nameinst = $("#inst-new-name").val();
+
+	  if (nameinst === '') {
+		  toastr.error('<strong>Name</strong> is required!', 'Missing!');
+
+    } else {
+		  d.newpattern.inst.text = nameinst;
+		  d.pattern.push(d.newpattern);
+		  d.newpattern = { id: d.pattern.length, inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] };
+
+		  let urlinst = $("#inst-sound-type").val();
+
+		  d.defSamples.push(urlinst);
+
+		  $scope.loadSample(urlinst, d.pattern.length - 1);
+
+    }
+  };
+
   $scope.upClock = function (inst, step) {
     if (playing) {
       // Update clock status on instruments's steps
@@ -632,28 +741,47 @@ app.controller("DmController", function($scope, $compile) {
   };
 
   let updateSteps = function (inst) {
-    let verse = (typeof inst !== 'undefined') ? Array(d.pattern[parseInt(inst)]): d.pattern;
+    let patterns = (typeof inst !== 'undefined') ? Array(d.pattern[parseInt(inst)]): d.pattern;
 
-    verse.forEach(function(inst) {
-      let linesteps = $("#inst-" + inst.id + " .line-steps");
+    patterns.forEach(function(pattern) {
+	    let linesteps = $("#inst-" + pattern.id + " .line-steps");
+      // Blur instruments on loading
+      if (pattern.inst.audio === null) {
+
+	      let filterVal = 'blur(5px)';
+	      $('#set-' + pattern.id + ' > p')
+		      .css('filter',filterVal)
+		      .css('webkitFilter',filterVal)
+		      .css('mozFilter',filterVal)
+		      .css('oFilter',filterVal)
+		      .css('msFilter',filterVal)
+          .css('pointer-events', 'none');
+	      linesteps
+		      .css('filter',filterVal)
+		      .css('webkitFilter',filterVal)
+		      .css('mozFilter',filterVal)
+		      .css('oFilter',filterVal)
+		      .css('msFilter',filterVal)
+          .css('pointer-events', 'none');
+      }
       // Render different width x beat-type
       linesteps.removeClass('beat-4 beat-8 beat-16 beat-32');
-      linesteps.addClass('beat-' + inst.beat.id);
+      linesteps.addClass('beat-' + pattern.beat.id);
 
       let step = linesteps.children();
 
-      for (var index = 0; index < inst.steps.length; index++) {
-        if (index > (inst.view - 1)) {
-          $(step[index]).addClass("disabled");
+      for (let a = 0; a < pattern.steps.length; a++) {
+        if (a > (pattern.view - 1)) {
+          $(step[a]).addClass("disabled");
 
         } else {
-          $(step[index]).removeClass("disabled");
+          $(step[a]).removeClass("disabled");
         }
 
-        if (inst.steps[index] === 1) {
-          $(step[index]).addClass("select");
+        if (pattern.steps[a] === 1) {
+          $(step[a]).addClass("select");
         } else {
-          $(step[index]).removeClass("select");
+          $(step[a]).removeClass("select");
         }
       }
     });
@@ -672,5 +800,17 @@ app.directive('onLastRepeat', function() {
     if (scope.$last) {
       scope.$emit('onRepeatLast', element, attrs);
     }
+  };
+});
+
+app.filter('range', function() {
+  return function(input, total) {
+    total = parseInt(total);
+
+    for (var i=0; i<total; i++) {
+      input.push(i);
+    }
+
+    return input;
   };
 });

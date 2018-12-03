@@ -23,10 +23,33 @@ body {
     -ms-user-select: none;      /* IE 10+ */
     user-select: none;
 }
-i, .button-step, .white-button {
+i, .button-step, .white-button, .box-label {
   cursor: pointer;
 }
 
+input, select {
+    padding: 5px;
+    border: none;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font-family: inherit;
+}
+.grid-area-a {
+    grid-area: a;
+}
+.grid-area-b {
+    grid-area: b;
+}
+.grid-area-c {
+    grid-area: c;
+}
+.grid-area-d {
+    grid-area: d;
+}
+.grid-area-e {
+    grid-area: e;
+}
 .blue {
   color: #495bfd;
 }
@@ -41,14 +64,18 @@ i, .button-step, .white-button {
 }
 .white-button {
     background: #ffffff;
-    border: 2px solid black;
+    border: 2px solid #9af4d9;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
     margin: auto;
+    font-weight: bold;
 }
 .white-button.select {
-    background: #495bfd;
+    background: #3DF4C9;
+}
+.white-button p {
+    text-align: center;
 }
 .white-button.select p {
     color: #ffffff;
@@ -57,35 +84,32 @@ i, .button-step, .white-button {
     background: pink;
 }
 
-
+.step-height {
+    height: 40px;
+}
 .button-step {
-  display: inline-block;
-  position: relative;
-  width: 55px;
-  height: 89px;
-  background: #ffffff;
-  margin: 0 2px;
-  border: 2px solid black;
-  border-radius: 3px;
+    float: left;
+    position: relative;
+    width: 55px;
+    background: #fff;
+    margin: 0 2px;
+    border: 2px solid #fff;
+    border-radius: 3px;
     -webkit-transition: 250ms width;
     -moz-transition: 250ms width;
     -ms-transition: 250ms width;
     -o-transition: 250ms width;
     transition: 250ms width;
 }
-.button-step .number {
-  position: absolute;
-  top: 50%; bottom: 0; right: 0; left: 0;
-  text-align: center;
-  margin: auto;
-  color: #495bfd;;
-}
 
+.button-step.select.clock {
+    background: #FC8280;
+}
 .button-step.clock {
-    background: #0ad18b;
+    background: #FC8280;
 }
 .button-step.select {
-  background: #495bfd;
+  background: #3DF4C9;
 }
 .button-step.select span {
   color: #ffffff;
@@ -95,13 +119,60 @@ i, .button-step, .white-button {
     pointer-events: none;
   opacity: 0.05;
 }
-.line-steps {
-    height: 93px;
-    margin-bottom: 3px;
-    text-align: left;
-    width: 1088px;
-
+.line-steps-height {
+    height: 44px;
+    padding-top: 25px;
 }
+.line-labels {
+    position: absolute;
+    width: 100%;
+}
+
+.box-label {
+    display: grid;
+    align-content: center;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-areas: "a a a a b b b b b b b b b b b b b c d e";
+
+    height: 25px;
+    margin-bottom: 59px;
+    margin-left: 7px;
+    position: relative;
+    width: 98%;
+}
+.box-label > p {
+    position: relative;
+    float: left;
+    z-index: 2;
+    margin-bottom: 0;
+    margin-top: 0;
+    font-weight: bold;
+    color: #005f42;
+}
+.box-label > p i {
+    padding: 3px;
+}
+.box-label > .white-button {
+    text-align: center;
+    padding: 1px;
+}
+
+.line-units > div {
+    width: 60px;
+    position: relative;
+    display: inline-block;
+    text-align: right;
+}
+.line-units > div strong {
+    position: absolute;
+}
+.line-units > div strong.right-max {
+    right: -6px;
+}
+.line-units > div strong.right-min {
+    right: -2px;
+}
+
 .line-sets {
   position: absolute;
   width: 300px;
@@ -173,39 +244,71 @@ i, .button-step, .white-button {
 .line-set .fa-cog{
   margin-top: 8px;
 }
-.line-inst {
-    position: relative;
-    margin-top: 5px;
-  transform: translateX(80px);
+.number {
+    display: block;
+    text-align: center;
 }
+.line-insts {
+    position: relative;
+}
+.line-inst {
+    width: 960px;
+    position: relative;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border: 3px solid #9AF4D9;
 
+}
+.line-inst:nth-child(odd) {
+    background-color: #3DF4C9;
+}
+.line-inst:nth-child(even) {
+    /*background-color: #FC8280;*/
+    background-color: #9AF4D9;
+}
+.line-inst-margin-top {
+    margin-top: 5px;
+}
+.line-inst-padding {
+    padding: 2px;
+}
 #line-tempo {
+    grid-area: a;
   margin-bottom: 34px;
 }
 #line-tempo .title {
+    position: relative;
   width: 89px;
-  margin-bottom: 3px;
+    height: 56px;
+}
+#line-tempo .title p{
+    margin-left: 15px;
+}
+#line-tempo .title small{
+    margin-top: 17px;
+    position: absolute;
+    right: 14px;
 }
 #tap {
   width: 89px;
   height: 55px;
+    margin-left: 28px;
 }
 .fas.tempo {
     position: absolute;
-    right: 0;
-    left: 130px;
+    top: 0;
+    left: 84px;
     width: 20px;
     height: 20px;
     line-height: 20px;
-}
-#plus-tempo .tempo {
-    margin-top: 10px;
+    text-align: center;
 }
 #minus-tempo .tempo {
-    margin-top: -25px;
+    margin-top: 33px;
 }
 #line-file {
-  display: inline-flex;
+    grid-area: b;
 }
 #line-file div:first-child {
   margin-right: 3px;
@@ -223,23 +326,37 @@ i, .button-step, .white-button {
     display: block;
     overflow: scroll;
 }
-#control-area {
+#main-area > div {
     display: block;
+    vertical-align: top;
+}
+#line-play {
+    grid-area: c;
+}
+#control-area {
+    display: grid;
+    align-content: center;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-areas: "a a b b b b c";
     position: relative;
-    width: 350px;
-    height: 100%;
     margin: auto;
     margin-left: 7px;
-    align-items: center;
-    text-align: center;
+    text-align: left;
 }
-#window {
-    display: inline-flex;
+#control-area > div {
+    display: inline-block;
+}
+#control-area > div > p {
+    text-align: left;
+}
+
+#control-area div > div {
+    display: inline-grid;
 }
 #surface {
-    width: fit-content;
+    display: block;
     margin: auto;
-    display: grid;
+    width: min-content;
 }
 #update-area {
     display: inline-flex;
@@ -248,6 +365,12 @@ i, .button-step, .white-button {
 #update-area > div {
     margin: 0 5px;
     padding: 0 5px;
+}
+
+.inst-new-par {
+    display: inline-block;
+    position: relative;
+    margin: 0 5px;
 }
 
 @media only screen and (min-width: 1542px) {
@@ -259,9 +382,9 @@ i, .button-step, .white-button {
     }
 }
 
-.beat-4 > .button-step {width: 128px;}
-.beat-8 > .button-step {width: 60px;}
-.beat-16 > .button-step {width: 26px;}
-.beat-32 > .button-step {width: 9px;}
+.beat-4 > .button-step {width: 112px;}
+.beat-8 > .button-step {width: 52px;}
+.beat-16 > .button-step {width: 22px;}
+.beat-32 > .button-step {width: 7px;}
 .beat-32 > .button-step span {
     display: none;}
