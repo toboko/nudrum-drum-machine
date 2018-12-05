@@ -14,6 +14,56 @@
 </head>
 <body data-ng-controller="DmController as d">
 <div id="surface">
+    <div id="edit-area">
+        <p class="title">
+            <strong>{{d.pattern[d.trkOn].inst.text}}</strong>
+            <i data-ng-click="closeEditArea()" class="fas fa-times-circle"></i>
+        </p>
+        <div class="line-set">
+            <div class="volume grid-area-a">
+                <p class="title">volume</p>
+                <i class="fas fa-caret-up" data-ng-click="setVolume(true, d.trkOn)"></i>
+                <p class="value">{{d.pattern[d.trkOn].inst.vol}}</p>
+                <i class="fas fa-caret-down" data-ng-click="setVolume(false, d.trkOn)"></i>
+            </div>
+            <div class="offset grid-area-b">
+                <p class="title">offset</p>
+                <i class="fas fa-caret-up" data-ng-click="setOffset(true, d.trkOn)"></i>
+                <p class="value">{{d.pattern[d.trkOn].view}}</p>
+                <i class="fas fa-caret-down" data-ng-click="setOffset(false, d.trkOn)"></i>
+            </div>
+            <div class="beat grid-area-c">
+                <p class="title">beat</p>
+                <i class="fas fa-caret-up" data-ng-click="setBeat(true, d.trkOn)"></i>
+                <p class="value">{{d.pattern[d.trkOn].beat.id}}</p>
+                <i class="fas fa-caret-down" data-ng-click="setBeat(false, d.trkOn)"></i>
+            </div>
+        </div>
+        <div class="line-set">
+            <div class="offset grid-area-b">
+                <p class="click" data-ng-click="delete(d.trkOn)"><i class="fas fa-trash"></i> Delete</p>
+            </div>
+        </div>
+    </div>
+    <div id="browse-area">
+        <p class="title">
+            <strong>Save Your Pattern</strong>
+            <i data-ng-click="closeBrowseArea()" class="fas fa-times-circle"></i>
+        </p>
+        <div class="inst-new-par step-height">
+            <input id="pattern-new-name" aria-label="pattern-new-name" type="text" placeholder="Name" />
+        </div>
+        <div class="inst-new-par step-height">
+            <div id="save" class="click"  data-ng-click="save()">
+                <p><i class="fas fa-save"></i> Save</p>
+            </div>
+        </div>
+
+        <p class="title">
+            <strong>Latest Patterns</strong>
+        </p>
+        <div id="latest-pattern"></div>
+    </div>
     <div id="window">
         <div id="main-area">
             <div class="line-units">
@@ -27,25 +77,31 @@
             </div>
             <div class="line-insts">
                 <div class="line-labels">
-                    <div data-ng-repeat="instrument in d.pattern" id="set-{{$index}}" class="box-label">
-                        <p class="grid-area-a name">{{instrument.inst.text}}</p>
-                        <p class="grid-area-c mute" ng-click="mute($index)"><i class="fas fa-volume-up"></i></p>
-                        <p class="grid-area-d clear" ng-click="clear($index)"><i class="fas fa-broom"></i></p>
-                        <p class="grid-area-e edit"><i class="open-set"></i> Edit</p>
+                    <div data-ng-repeat="label in d.pattern track by $index"
+                         ng-init="labelIndex = $index"
+                         id="set-{{labelIndex}}"
+                         class="box-label">
+                        <p class="grid-area-a name">{{label.inst.text}}</p>
+                        <p class="grid-area-c mute" ng-click="mute(labelIndex)"><i class="fas fa-volume-up"></i></p>
+                        <p class="grid-area-d clear" ng-click="clear(labelIndex)"><i class="fas fa-broom"></i></p>
+                        <p class="grid-area-e edit" ng-click="select(labelIndex)"><i class="open-set"></i> Edit</p>
                     </div>
                     <div id="set-{{d.instruments.length}}" class="box-label" data-ng-click="newInst()">
                         <p class="grid-area-a"><i class="fas fa-plus open-set"></i> New Instrument</p>
                     </div>
                 </div>
                 <div id="inst-{{$index}}" class="line-inst line-inst-margin-top line-inst-padding"
-                     data-ng-repeat="set in d.pattern">
-                    <div class="line-steps line-steps-height beat-{{set.beat.id}}">
-                        <div  data-ng-repeat="step in set.steps track by $index"
-                              data-ng-click="selectStep(set.id, $index)"
-                              id="step-{{$index + 1}}"
+                     data-ng-repeat="inst in d.pattern track by $index"
+                     ng-init="instIndex = $index">
+                    <div class="line-steps line-steps-height beat-{{inst.beat.id}}">
+
+                        <div  data-ng-repeat="step in inst.steps track by $index"
+                              ng-init="stepIndex = $index"
+                              data-ng-click="selectStep(instIndex, stepIndex)"
+                              id="step-{{stepIndex + 1}}"
                               class="button-step step-height"
                               on-last-repeat>
-                            <span class="number">{{$index + 1}}</span>
+                            <span class="number">{{stepIndex + 1}}</span>
                         </div>
                     </div>
                 </div>
@@ -74,31 +130,6 @@
                 </div>
 
             </div>
-            <div class="line-sets">
-                <div class="line-set">
-                    <div class="volume">
-                        <p class="title">volume</p>
-                        <i class="fas fa-arrow-up" data-ng-click="setVolume($index, true)"></i>
-                        <p class="value">5</p>
-                        <i class="fas fa-arrow-down" data-ng-click="setVolume($index, false)"></i>
-                    </div>
-                    <div class="offset">
-                        <p class="title">offset</p>
-                        <i class="fas fa-arrow-up" data-ng-click="setOffset(true, $index)"></i>
-                        <p class="value">16</p>
-                        <i class="fas fa-arrow-down" data-ng-click="setOffset(false, $index)"></i>
-                    </div>
-                    <div class="beat">
-                        <p class="title">beat</p>
-                        <i class="fas fa-arrow-up" data-ng-click="setBeat(true, $index)"></i>
-                        <p class="value">8</p>
-                        <i class="fas fa-arrow-down" data-ng-click="setBeat(false, $index)"></i>
-                    </div>
-                    <div class="label">
-                        <p>Name Inst <br><i class="fas fa-cog open-set"></i></p>
-                    </div>
-                </div>
-            </div>
         </div>
         <div id="control-area">
             <div id="line-tempo">
@@ -121,9 +152,6 @@
                 <p>File</p>
                 <div id="load" class="white-button" data-ng-click="load()">
                     <p>Load</p>
-                </div>
-                <div id="save" class="white-button" data-ng-click="save()">
-                    <p>Save</p>
                 </div>
             </div>
             <div id="line-play">

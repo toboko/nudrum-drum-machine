@@ -17,15 +17,23 @@ norm = function (i, l) {
   }
   return (i === 0) ? 1 : i;
 };
+normal = function (i, l) {
+	i = i % l;
+	return (i === 0) ? l : i;
+};
 
-rshft = function(arr, places) {
-  for (var i = 0; i < places; i++) {
+normtoo = function (i, l) {
+	return i % l;
+};
+
+let rshft = function(arr, places) {
+  for (let i = 0; i < places; i++) {
     arr.unshift(arr.pop());
   }
 };
 
-lshft = function(arr, places) {
-  for (var i = 0; i < places; i++) {
+let lshft = function(arr, places) {
+  for (let i = 0; i < places; i++) {
     arr.push(arr.shift());
   }
 };
@@ -79,13 +87,13 @@ app.controller("DmController", function($scope, $compile) {
   const d = this;
 
   // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyBt_VQC9YWeaP0fOgfGTjssYV706d4nvlo",
-    authDomain: "multirhythmdrummachine-9aa88.firebaseapp.com",
-    databaseURL: "https://multirhythmdrummachine-9aa88.firebaseio.com",
-    projectId: "multirhythmdrummachine-9aa88",
-    storageBucket: "multirhythmdrummachine-9aa88.appspot.com",
-    messagingSenderId: "985602133680"
+  let config = {
+	  apiKey: "AIzaSyCPrwHHgupU8jXdlnuulh9_yTYn-Ry2Gqc",
+	  authDomain: "nudrum-app.firebaseapp.com",
+	  databaseURL: "https://nudrum-app.firebaseio.com",
+	  projectId: "nudrum-app",
+	  storageBucket: "nudrum-app.appspot.com",
+	  messagingSenderId: "1098853194105"
   };
 
   firebase.initializeApp(config);
@@ -97,18 +105,30 @@ app.controller("DmController", function($scope, $compile) {
   // On load update latest samples link
   // TODO: Save this in cache. If not exists download over firebase
   d.db.ref("samples/").on("value", data => {
+
     if (data.exists()) {
       let ones = true;
       let types = Object.entries(data.val());
+
       types.forEach(function (type) {
-        $("#inst-sound-type").append('<optgroup id="group-' + type[0] + '" label="' + type[0] + '"></optgroup>');
+        $("#inst-sound-type").append('<optgroup ' +
+          'id="group-' + type[0] + '" ' +
+          'label="' + type[0] + '"></optgroup>');
         let elements = Object.entries(type[1]);
+
         elements.forEach(function (element) {
+
           if (ones) {
-            $('#group-' + type[0]).append('<option selected="selected" name="' + element[0] + '" value="' + type[0] + '/' + element[0] + '.wav' + '">'+ type[0] + ' ' + element[0] + '</option>');
+            $('#group-' + type[0]).append('<option ' +
+              'selected="selected" ' +
+              'name="' + element[0] + '" ' +
+              'value="' + type[0] + '/' + element[0] + '.wav' + '">'+ type[0] + ' ' + element[0] + '</option>');
             ones = false;
+
           } else {
-            $('#group-' + type[0]).append('<option name="' + element[0] + '" value="' + type[0] + '/' + element[0] + '.wav' + '">'+ type[0] + ' ' + element[0] + '</option>');
+            $('#group-' + type[0]).append('<option ' +
+              'name="' + element[0] + '" ' +
+              'value="' + type[0] + '/' + element[0] + '.wav' + '">'+ type[0] + ' ' + element[0] + '</option>');
 
           }
         })
@@ -118,8 +138,9 @@ app.controller("DmController", function($scope, $compile) {
 
   // On load update latest pattern uploaded
   d.db.ref("patterns/").orderByChild("when").on("value", data => {
-      updateArea = $("#update-area");
-      updateArea.empty();
+      let latestPattern = $("#latest-pattern");
+      latestPattern.empty();
+
       if (data.exists()) {
         data = Object.values(data.val());
 
@@ -131,12 +152,12 @@ app.controller("DmController", function($scope, $compile) {
         });
 
         bytime.forEach(function(value) {
-          id = value.id;
-          when = value.when;
-          label = "Pattern";
+          let id = value.id;
+          let title = value.title
+          let when = value.when;
 
-          today = Date.now();
-          diff = today - when;
+          let today = Date.now();
+          let diff = today - when;
 
           if (Date.dateDiff("d", diff) >= 15) {
             when = Date.dateDiff("w", diff) + " weeks ago";
@@ -149,18 +170,29 @@ app.controller("DmController", function($scope, $compile) {
           } else if (Date.dateDiff("s", diff) >= 2) {
             when = Date.dateDiff("s", diff) + " seconds ago";
           } else {
-            label = "New";
             when = "now";
           }
 
-          var $el = $(
-            '<div class="white-button" data-ng-click="load(\'' +id +"')\">" +
-            "<p>" +label +" <strong>" +id +"</strong>" +
-            "<br><small>" +when +"</small>" +
-            "</p></div>"
-          ).appendTo("#update-area");
+          let $el = $('' +
+            '<div class="line-set-large click">' +
+              '<div class="grid-area-a" data-ng-click="load(\'' +id +"')\">" +
+                "<p><i class=\"fas fa-caret-right\"></i> <strong>[" +id +"]</strong> <small>" +when + "</small> " +
+                  "<br>" + title +
+                "</p>" +
+              "</div>" +
+            "</div>"
+          ).appendTo("#latest-pattern");
           $compile($el)($scope);
         });
+      } else {
+	      let $el = $('' +
+		      '<div class="line-set-large click">' +
+		      '<div class="grid-area-a">' +
+		      "<p>No Patterns</p>" +
+		      "</div>" +
+		      "</div>"
+	      ).appendTo("#latest-pattern");
+	      $compile($el)($scope);
       }
     });
 
@@ -181,17 +213,17 @@ app.controller("DmController", function($scope, $compile) {
   const MAXROTATION = 125;
   const MINROTATION = -MAXROTATION;
 
-  var playing = false; // play/stop
-  var toutPly = null; // playing timeout
-  var fxIdClk = {state: false, inst: 0}; // fix clock while beat change
-  var idxClk = 1; // index clock position
+  let playing = false; // play/stop
+  let toutPly = null; // playing timeout
+  let fxIdClk = {state: false, inst: 0}; // fix clock while beat change
+  let idxClk = 1; // index clock position
 
-  var tTempo = 0;
-  var lstTempo = -1;
-  var avgTempo = [0, 0, 0, 0, 0, 0];
+  let tTempo = 0;
+  let lstTempo = -1;
+  let avgTempo = [0, 0, 0, 0, 0, 0];
 
-  d.trackSelected = 0; // index track selected
-  d.tempo = DEFAULTTEMPO;
+  d.trkOn = 0; // index track selected
+  d.tempo  = DEFAULTTEMPO;
   d.plyTxt = "PLAY";
 
   /*    beat obj. {
@@ -218,16 +250,16 @@ app.controller("DmController", function($scope, $compile) {
   //    [row]     [columns]
   // instruments    beats
   d.pattern = Array(
-    { id: 0, inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 3, ended: false, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0] },
-    { id: 1, inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { id: 2, inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 32, ended: false, cycle: 0, beat: d.beat[16], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { id: 3, inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 64, ended: false, cycle: 0, beat: d.beat[32], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { id: 4, inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { id: 5, inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+    { inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 5, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0] },
+    { inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 32, cycle: 0, beat: d.beat[16], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 64, cycle: 0, beat: d.beat[32], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
   );
 
 	d.newpattern = {
-	  id: d.pattern.length, inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+	  inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 	};
 
 	$scope.loadSample = function(sample, inst) {
@@ -257,6 +289,10 @@ app.controller("DmController", function($scope, $compile) {
 				.css('oFilter',filterVal)
 				.css('msFilter',filterVal)
 				.css('pointer-events', 'visible');
+
+		}).catch(function(error) {
+			// Handle any errors
+			toastr.error([sample, error.code].join(' '), error.name);
 		});
 	};
 
@@ -357,8 +393,15 @@ app.controller("DmController", function($scope, $compile) {
     $scope.setTempo(xT);
   };
 
+  /* Edit Functions
+
+
+
+   */
+
   $scope.setBeat = function(inc, inst) {
     let flupt   = false;
+
     let oldbeat = (typeof inst !== 'undefined') ? d.pattern[inst].beat.id : d.newpattern.beat.id;
     let newbeat = oldbeat;
     // Controls on new beat
@@ -404,10 +447,9 @@ app.controller("DmController", function($scope, $compile) {
       fxIdClk.state = true;
       fxIdClk.inst  = inst;
 
-      $scope.resetSteps(d.pattern[inst]);
-      $scope.upClock(inst, d.pattern[inst].clock);
+      //$scope.upClock(inst, d.pattern[inst].clock);
 
-      if (flupt) updateSteps(inst);
+      //if (flupt) $scope.forkUpUi(inst);
 
     } else {
       // New Beat
@@ -420,44 +462,92 @@ app.controller("DmController", function($scope, $compile) {
   };
 
   $scope.setOffset = function(inc, inst) {
+  	let pattern = d.pattern[inst];
+	  let x  = normtoo(pattern.view * pattern.cycle, pattern.beat.offset) + 1;
+	  let y  = normtoo((pattern.view * pattern.cycle) + pattern.view, pattern.beat.offset);
+	  let y1 = (y-1 === -1) ? pattern.beat.offset : y-1;
+	  let t = normtoo(pattern.clock, pattern.beat.offset); 	 // Identify the clock position on the steps
 
-    let newoffset = (typeof inst !== 'undefined') ? d.pattern[inst].view : d.newpattern.view;
-    let maxoffset = (typeof inst !== 'undefined') ? d.pattern[inst].beat.offset : d.newpattern.beat.offset;
+	  // In these cases, during playback changing the offset can create glitch on UI
+	  let xStep  = [x,y1,y];
+	  console.log(xStep, t)
+	  let preventBug = !(playing && (xStep.includes(t)));
 
-    newoffset = inc ? (newoffset += 1) : (newoffset -= 1);
-    newoffset = newoffset < 1 ? 1 : newoffset;
-    newoffset = newoffset > maxoffset ? maxoffset : newoffset;
+  	if (preventBug) {
+		  let newoffset = (typeof inst !== 'undefined') ? pattern.view : d.newpattern.view;
+		  let maxoffset = (typeof inst !== 'undefined') ? pattern.beat.offset : d.newpattern.beat.offset;
 
-    if (typeof inst !== 'undefined') {
+		  newoffset = inc ? (newoffset += 1) : (newoffset -= 1);
+		  newoffset = newoffset < 5 ? 5 : newoffset;
+		  newoffset = newoffset > maxoffset ? maxoffset : newoffset;
 
-      if (newoffset <= maxoffset) {
-        $("#inst-" + inst + " div.line-steps .button-step").removeClass("disabled");
+		  if (typeof inst === 'undefined') {
+			  d.newpattern.view = newoffset;
 
-        for (var i = newoffset + 1; i <= maxoffset; i++) {
-          $("#inst-" + inst + " div.line-steps #step-" + i).addClass("disabled");
-        }
-      }
-      d.pattern[inst].view = newoffset;
-
-    } else {
-
-      d.newpattern.view = newoffset;
-    }
+		  } else {
+			  pattern.view = newoffset;
+			  $scope.forkUpUi(inst)
+		  }
+	  }
   };
 
-  $scope.setVolume = function(index, inc) {
-    let newvol = d.instruments[index].vol;
+  $scope.setVolume = function(inc, inst) {
+    let newvol = d.pattern[inst].vol;
     newvol = inc ? (newvol += 1) : (newvol -= 1);
     newvol = newvol <= 0 ? 0 : newvol;
     newvol = newvol >= 10 ? 10 : newvol;
-    d.pattern[index].inst.vol = newvol;
+    d.pattern[inst].inst.vol = newvol;
 
-    if (d.pattern[index].inst.mute) {
-      d.pattern[index].inst.audio.volume = 0;
+    if (d.pattern[inst].inst.mute) {
+      d.pattern[inst].inst.audio.volume = 0;
     } else {
-      d.pattern[index].inst.audio.volume = newvol / MAXVOLUME;
+      d.pattern[inst].inst.audio.volume = newvol / MAXVOLUME;
     }
   };
+
+	$scope.delete = function(inst) {
+		d.pattern.splice(inst, 1);
+		d.defSamples.splice(inst, 1)
+		d.trkOn = 0;
+
+		if (d.pattern.length === 0) {
+		  $scope.closeEditArea()
+    }
+
+		$scope.forkUpUi()
+	};
+
+	$scope.select = function(inst) {
+		$('#edit-area').css({
+			"-webkit-transform" : 'translateX(0)',
+			"-ms-transform" : 'translateX(0)',
+			"transform" : 'translateX(0)',
+		});
+		d.trkOn = inst;
+	};
+
+	$scope.closeEditArea = function() {
+		$('#edit-area').css({
+			"-webkit-transform" : 'translateX(-100vh)',
+			"-ms-transform" : 'translateX(-100vh)',
+			"transform" : 'translateX(-100vh)',
+		});
+	};
+
+	$scope.closeBrowseArea = function() {
+		$('#browse-area').css({
+			"-webkit-transform" : 'translateX(100vh)',
+			"-ms-transform" : 'translateX(100vh)',
+			"transform" : 'translateX(100vh)',
+		});
+	};
+
+  /* Pattern Functions
+
+
+
+
+   */
 
   $scope.save = function() {
     let id = short();
@@ -475,38 +565,44 @@ app.controller("DmController", function($scope, $compile) {
 	  let samples = JSON.stringify(d.defSamples);
     let when = Date.now();
     let hash = md5(pattern);
+    let title = $('#pattern-new-name').val()
 
-    // check if there is duplicated pattern
-    d.db
-      .ref("patterns")
-      .orderByChild("hash")
-      .equalTo(hash)
-      .on("value", snapshot => {
-        // pattern is new
-        if (!snapshot.exists()) {
-          d.db.ref("patterns/" + id).set(
-            {
-              id: id,
-              hash: hash,
-              when: when,
-              pattern: pattern,
-              samples: samples,
-              star: 0,
-              title: "Example"
-            },
-            function(error) {
-              if (error) {
-	              // The write failed...
-	              toastr.error('error', 'Error!');
-              } else {
-	              // Data saved successfully!
-	              toastr.success('Pattern uploaded with id <strong>' + id + '</strong>', 'Success');
-              }
-            }
-          );
-        } else {
-        }
-      });
+	  if (title === '') {
+	  	toastr.warning('<strong>Name</strong> is required', 'Missing!')
+	  } else {
+		  // check if there is duplicated pattern
+		  d.db
+			  .ref("patterns")
+			  .orderByChild("hash")
+			  .equalTo(hash)
+			  .on("value", snapshot => {
+				  // pattern is new
+				  if (!snapshot.exists()) {
+					  d.db.ref("patterns/" + id).set(
+						  {
+							  id: id,
+							  hash: hash,
+							  when: when,
+							  pattern: pattern,
+							  samples: samples,
+							  star: 0,
+							  title: title
+						  },
+						  function (error) {
+							  if (error) {
+								  // The write failed...
+								  toastr.error('error', 'Error!');
+							  } else {
+								  // Data saved successfully!
+								  toastr.success('Pattern uploaded with id <strong>' + id + '</strong>', 'Success');
+							  }
+						  }
+					  );
+				  } else {
+					  toastr.warning('Pattern already exists', 'Warning!');
+				  }
+			  });
+	  }
   };
 
 
@@ -521,7 +617,7 @@ app.controller("DmController", function($scope, $compile) {
 
         $scope.loadAllSample();
         $scope.resetClock();
-        updateSteps();
+        $scope.forkUpUi();
       } else {
         // The read failed...
       }
@@ -533,15 +629,14 @@ app.controller("DmController", function($scope, $compile) {
    *
    *
    * **/
-
-  $scope.selectStep = function(inst, step) {
-    let item = $("#inst-" + inst + " div.line-steps #step-" + (step+1));
-    d.pattern[inst].steps[step] = item[0].classList.toggle("select") ? 1 : 0;
-  };
+	$scope.selectStep = function(inst, step) {
+		let item = document.getElementById("inst-" + inst).querySelector("#step-" + (step + 1));
+		d.pattern[inst].steps[step] = item.classList.toggle("select") ? 1 : 0;
+	};
 
   $scope.clear = function(inst) {
 	  d.pattern[inst].steps.forEach(function(value, index, array) { array[index] = 0; });
-	  updateSteps(inst);
+	  $scope.forkUpUi(inst);
   };
 
   /**  MIX functions
@@ -559,7 +654,7 @@ app.controller("DmController", function($scope, $compile) {
 
   $scope.mute = function(inst) {
     d.pattern[inst].inst.mute = !d.pattern[inst].inst.mute;
-    d.pattern[inst].inst.audio.volume = d.pattern[inst].inst.mute ? 0.0 : d.pattern[inst].inst.vol / 10;
+    d.pattern[inst].inst.audio.volume = d.pattern[inst].inst.mute ? 0.0 : d.pattern[inst].inst.vol / MAXVOLUME;
     if (d.pattern[inst].inst.mute) {
 	    $('#set-' + inst + ' .mute').html('<i class="fas fa-volume-mute"></i>')
     } else {
@@ -572,19 +667,13 @@ app.controller("DmController", function($scope, $compile) {
    *
    *
    * **/
-  $scope.resetSteps = function( inst ) {
-    for (x = inst.steps.length; x > 0; x--) {
-      $("#inst-" + inst.id + " #step-" + x).prependTo("#inst-" + inst.id + " .line-steps")
-    }
-  };
-
-  $scope.resetClock = function( element ) {
-    let verse = (typeof element !== 'undefined') ? element : d.pattern;
-    verse.forEach(function(inst) {
-      inst.clock = 1;
-      inst.cycle  = 0;
-      // Shift left steps to restore the original position
-      $scope.resetSteps(inst)
+  $scope.resetClock = function( inst ) {
+    let patterns = (typeof inst !== 'undefined') ? inst : d.pattern;
+    patterns.forEach(function(element, index) {
+	    if (element.view < element.beat.offset) lshft(element.steps, element.cycle * element.view)
+	    // Shift left steps to restore the original position
+	    element.cycle = 0;
+	    element.clock = 1;
     });
   };
 
@@ -605,7 +694,7 @@ app.controller("DmController", function($scope, $compile) {
       // change status text
       d.plyTxt = "START";
 
-      updateSteps();
+      $scope.forkUpUi();
 
     } else {
       // PLAY
@@ -643,72 +732,46 @@ app.controller("DmController", function($scope, $compile) {
 
   // Play the single instrument in own beat tempo
   $scope.playInst = function(inst, element) {
-    let beat = element.beat.offset;
-    let offset = element.view;
+    let beat  = element.beat.offset;
+    let view  = element.view;
 
-    // calculate the points of view
+	  let tcycle = normal(element.clock, view);    // Identify when a cycle finished
+	  let tbeat  = normal(element.clock, beat); 	 // Identify the clock position on the steps
 
-    if (element.steps[element.clock - 1]) {
-      if (d.pattern[inst].inst.audio.playing) {
-        d.pattern[inst].inst.audio.stop();
+
+	  if (element.steps[tbeat-1]) {
+      if (element.inst.audio.playing) {
+        element.inst.audio.stop();
       }
       // Play sample
-      d.pattern[inst].inst.audio.play();
+      element.inst.audio.play();
+		  if (inst === 0 ) console.log(tbeat-1, element.steps)
+
+	  }
+
+    if ((tcycle === 1) && (element.cycle !== 0) && (view !== beat)) {
+    	// Update UI
+	    $scope.forkUpUi(inst);
     }
-
-    if (element.ended && (offset !== beat)) {
-
-      //let fstep = $("#inst-" + inst + " #step-1");
-
-	    for (let x = element.beat.offset; x > (element.beat.offset - element.view); x--) {
-		    let line = $("#inst-" + inst + " .button-step");
-		    $("#inst-" + inst + " .line-steps").prepend(line.last());
-	    }
-
-      // Shift elements animation
-      //   fstep.animate(
-      //     { marginLeft : fstep.width() * element.view},
-      //     {
-      //       duration: d.beat[32].ms / d.tempo,
-      //       start: function () {
-      //         for (var x = 0; x < element.view; x++) {
-      //           let line = $("#inst-" + inst + " .button-step");
-      //
-      //           line.last().hide();
-      //           $("#inst-" + inst + " .line-steps").prepend(line.last());
-      //         }
-      //
-      //       },
-      //       complete: function () {
-      //         let line = $("#inst-" + inst + " .button-step");
-      //
-      //         $("#inst-" + inst + " #step-1").removeAttr("style");
-      //         for (var x = 0; x < element.view; x++) {
-      //           $(line[x]).show()
-      //         }
-      //       }
-      //   });
-        element.ended = false;
-    }
-
 
     // select clock step on instrument line steps
-    $scope.upClock(inst, element.clock);
+    $scope.upClock(inst, tbeat);
 
     // inc clock instrument value
-    if (fxIdClk.state && fxIdClk.inst === inst) {
-      fxIdClk.state = false;
-      element.clock = norm(Math.ceil(idxClk / element.beat.rate) + 1, offset);
+	  element.clock = (element.clock += 1);
 
-    } else {
-      element.clock = norm((element.clock + 1), offset);
-    }
+	  tcycle = normal(element.clock, view);
 
-    if (element.clock === 1) {
-      // Counting the cycle
-      element.cycle = (element.cycle += 1);
-      element.ended = true;
-    }
+	  if (tcycle === 1) {
+		  // Counting the cycle
+		  element.cycle = (element.cycle += 1);
+
+		  if (view !== beat) {
+			  // Right shift elements array
+			  rshft(element.steps, view);
+		  }
+	  }
+
   };
 
 
@@ -716,12 +779,12 @@ app.controller("DmController", function($scope, $compile) {
 	  let nameinst = $("#inst-new-name").val();
 
 	  if (nameinst === '') {
-		  toastr.error('<strong>Name</strong> is required!', 'Missing!');
+		  toastr.warning('<strong>Name</strong> is required!', 'Missing!');
 
     } else {
 		  d.newpattern.inst.text = nameinst;
 		  d.pattern.push(d.newpattern);
-		  d.newpattern = { id: d.pattern.length, inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, ended: false, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] };
+		  d.newpattern = { inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] };
 
 		  let urlinst = $("#inst-sound-type").val();
 
@@ -735,63 +798,96 @@ app.controller("DmController", function($scope, $compile) {
   $scope.upClock = function (inst, step) {
     if (playing) {
       // Update clock status on instruments's steps
-      $("#inst-" + inst + " div.line-steps > .button-step").removeClass("clock");
-      $("#inst-" + inst + " div.line-steps #step-" + step).addClass("clock");
+      $("#inst-" + inst + " .button-step").removeClass("clock");
+      $("#inst-" + inst + " #step-" + step).addClass("clock");
     }
   };
 
-  let updateSteps = function (inst) {
-    let patterns = (typeof inst !== 'undefined') ? Array(d.pattern[parseInt(inst)]): d.pattern;
-
-    patterns.forEach(function(pattern) {
-	    let linesteps = $("#inst-" + pattern.id + " .line-steps");
-      // Blur instruments on loading
-      if (pattern.inst.audio === null) {
-
-	      let filterVal = 'blur(5px)';
-	      $('#set-' + pattern.id + ' > p')
-		      .css('filter',filterVal)
-		      .css('webkitFilter',filterVal)
-		      .css('mozFilter',filterVal)
-		      .css('oFilter',filterVal)
-		      .css('msFilter',filterVal)
-          .css('pointer-events', 'none');
-	      linesteps
-		      .css('filter',filterVal)
-		      .css('webkitFilter',filterVal)
-		      .css('mozFilter',filterVal)
-		      .css('oFilter',filterVal)
-		      .css('msFilter',filterVal)
-          .css('pointer-events', 'none');
-      }
-      // Render different width x beat-type
-      linesteps.removeClass('beat-4 beat-8 beat-16 beat-32');
-      linesteps.addClass('beat-' + pattern.beat.id);
-
-      let step = linesteps.children();
-
-      for (let a = 0; a < pattern.steps.length; a++) {
-        if (a > (pattern.view - 1)) {
-          $(step[a]).addClass("disabled");
-
-        } else {
-          $(step[a]).removeClass("disabled");
+  $scope.forkUpUi = function (inst) {
+	  d.pattern.every(function(pattern, index) {
+      if (typeof inst !== 'undefined') {
+        if (index === inst)  {
+          updateSteps(pattern, inst);
+          return false;
         }
-
-        if (pattern.steps[a] === 1) {
-          $(step[a]).addClass("select");
-        } else {
-          $(step[a]).removeClass("select");
-        }
+        return true;
+      } else {
+	      updateSteps(pattern, index);
+        return true;
       }
     });
   };
 
 
+	let updateSteps = function (pattern, index) {
+			let linesteps = $("#inst-" + index + " .line-steps");
+			// Blur instruments on loading
+			if (pattern.inst.audio === null) {
+
+				let filterVal = 'blur(5px)';
+				$('#set-' + index + ' > p')
+					.css('filter',filterVal)
+					.css('webkitFilter',filterVal)
+					.css('mozFilter',filterVal)
+					.css('oFilter',filterVal)
+					.css('msFilter',filterVal)
+					.css('pointer-events', 'none');
+				linesteps
+					.css('filter',filterVal)
+					.css('webkitFilter',filterVal)
+					.css('mozFilter',filterVal)
+					.css('oFilter',filterVal)
+					.css('msFilter',filterVal)
+					.css('pointer-events', 'none');
+			}
+
+			let step = linesteps.children();
+
+			for (let a = 0; a < pattern.steps.length; a++) {
+
+				if (pattern.view < pattern.beat.offset) {
+					let x = normtoo(pattern.view * pattern.cycle, pattern.beat.offset);
+					let y = normtoo((pattern.view * pattern.cycle) + pattern.view - 1, pattern.beat.offset);
+
+					if (y < x) {
+						if (a > y && a < x) {
+							$(step[a]).addClass("disabled");
+
+						} else {
+							$(step[a]).removeClass("disabled");
+
+						}
+
+					} else {
+						if (a < x || a > y) {
+							$(step[a]).addClass("disabled");
+
+						} else {
+							$(step[a]).removeClass("disabled");
+
+						}
+					}
+				} else {
+					if (a > (pattern.view - 1)) {
+						$(step[a]).addClass("disabled");
+
+					} else {
+						$(step[a]).removeClass("disabled");
+					}
+				}
+
+				if (pattern.steps[a] === 1) {
+					$(step[a]).addClass("select");
+				} else {
+					$(step[a]).removeClass("select");
+				}
+			}
+	};
+
   $scope.$on('onRepeatLast', function(scope, element, attrs) {
     // Do some stuffs here
-    let inst = parseInt($(element).parent().parent().attr('id').substr(5));
-    updateSteps(inst)
+	  let inst = parseInt($(element).parent().parent().attr('id').substr(5));
+    $scope.forkUpUi(inst)
   });
 });
 
@@ -807,7 +903,7 @@ app.filter('range', function() {
   return function(input, total) {
     total = parseInt(total);
 
-    for (var i=0; i<total; i++) {
+    for (let i=0; i<total; i++) {
       input.push(i);
     }
 

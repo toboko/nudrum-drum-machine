@@ -23,7 +23,7 @@ body {
     -ms-user-select: none;      /* IE 10+ */
     user-select: none;
 }
-i, .button-step, .white-button, .box-label {
+i, .button-step, .white-button, .box-label, .click {
   cursor: pointer;
 }
 
@@ -94,12 +94,14 @@ input, select {
     background: #fff;
     margin: 0 2px;
     border: 2px solid #fff;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
     border-radius: 3px;
-    -webkit-transition: 250ms width;
-    -moz-transition: 250ms width;
-    -ms-transition: 250ms width;
-    -o-transition: 250ms width;
-    transition: 250ms width;
+    /*-webkit-transition: 250ms width;*/
+    /*-moz-transition: 250ms width;*/
+    /*-ms-transition: 250ms width;*/
+    /*-o-transition: 250ms width;*/
+    /*transition: 250ms width;*/
 }
 
 .button-step.select.clock {
@@ -173,31 +175,73 @@ input, select {
     right: -2px;
 }
 
-.line-sets {
-  position: absolute;
-  width: 300px;
-  transform: translateX(-224px);
-  z-index: 1;
-  left: 0;
-
-}
-.line-set {
-  display: grid;
-  width: 100%;
-  height: 89px;
-  margin-top: 5px;
-  text-align: center;
-  align-content: center;
-  background: #ffffff;
-  border-top: 2px solid #000000;
-  border-right: 2px solid #000000;
-  border-bottom: 2px solid #000000;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-areas: "a a b b c c d d";
-  transition: 200ms linear;
+#edit-area, #browse-area {
+    position: absolute;
+    z-index: 4;
+    background: #3df4c9;
+    border: 2px solid #3df4c9;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    padding: 16px 0;
+    -webkit-transition: all 500ms;
+    -moz-transition: all 500ms;
+    -ms-transition: all 500ms;
+    -o-transition: all 500ms;
+    transition: all 500ms;
+}
+#edit-area {
+    width: 300px;
+    top: 54px;
+    left: 20px;
+}
+#browse-area {
+    width: 300px;
+    top: 54px;
+    right: 20px;
+}
+#edit-area .fa-times-circle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+#browse-area .fa-times-circle {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+}
+#edit-area .title,
+#browse-area .title {
+    text-align: center;
+}
+.line-set {
+    display: grid;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 16px;
+    text-align: center;
+    align-content: center;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-areas: "a a b b c c";
+    transition: 200ms linear;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.line-set-large{
+    min-width: 100%;
+    text-align: left;
+    align-content: center;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas: "a a a";
+    transition: 200ms linear;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 0 15px;
+}
+.line-set-large:hover{
+    background: #a0f5db;
 }
 .line-set > div {
   position: relative;
@@ -221,28 +265,6 @@ input, select {
   width: 200%;
     pointer-events: none;
 
-}
-.line-set.select {
-  transform: translateX(+220px);
-}
-.line-set .volume {
-  grid-area: a;
-}
-.line-set .offset {
-  grid-area: b;
-}
-.line-set .beat {
-  grid-area: c;
-}
-.line-set .label {
-  grid-area: d;
-
-}
-.line-set .label p {
-  margin: 0;
-}
-.line-set .fa-cog{
-  margin-top: 8px;
 }
 .number {
     display: block;
@@ -371,6 +393,10 @@ input, select {
     display: inline-block;
     position: relative;
     margin: 0 5px;
+}
+
+div#simple-set > div {
+    float: left;
 }
 
 @media only screen and (min-width: 1542px) {
