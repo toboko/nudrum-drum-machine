@@ -12,7 +12,7 @@
     <meta charset="utf-8">
     <title>NuDrum</title>
 </head>
-<body data-ng-controller="DmController as d">
+<body data-ng-controller="DmController as d" class="fade">
 <div id="surface">
     <div id="edit-area">
         <p class="title">
@@ -46,19 +46,30 @@
         </div>
     </div>
     <div id="browse-area">
-        <p class="title">
-            <strong>Save Your Pattern</strong>
-            <i data-ng-click="closeBrowseArea()" class="fas fa-times-circle"></i>
-        </p>
-        <div class="inst-new-par step-height">
-            <input id="pattern-new-name" aria-label="pattern-new-name" type="text" placeholder="Name" />
-        </div>
-        <div class="inst-new-par step-height">
-            <div id="save" class="click"  data-ng-click="save()">
-                <p><i class="fas fa-save"></i> Save</p>
+        <div class="text-center">
+            <p class="title">
+                <strong>Save Your Pattern</strong>
+                <i data-ng-click="closeBrowseArea()" class="fas fa-times-circle"></i>
+            </p>
+            <div class="inst-new-par step-height">
+                <input id="pattern-new-name" aria-label="pattern-new-name" type="text" placeholder="Name" />
+            </div>
+            <div class="inst-new-par step-height">
+                <div id="save" class="click"  data-ng-click="save()">
+                    <p><i class="fas fa-save"></i> Save</p>
+                </div>
             </div>
         </div>
-
+        <div class="text-center">
+            <div class="inst-new-par step-height">
+                <input id="pattern-load-name" aria-label="pattern-new-name" type="text" placeholder="Pattern Code" />
+            </div>
+            <div class="inst-new-par step-height">
+                <div id="load" class="click"  data-ng-click="load()">
+                    <p><i class="fas fa-share"></i> Load</p>
+                </div>
+            </div>
+        </div>
         <p class="title">
             <strong>Latest Patterns</strong>
         </p>
@@ -131,37 +142,27 @@
 
             </div>
         </div>
-        <div id="control-area">
-            <div id="line-tempo">
-                <p>Tempo</p>
-
-                <div class="title">
-                    <p>{{d.tempo}} <br><small>BPM</small></p>
-                    <div id="minus-tempo">
-                        <i class="fas fa-caret-down tempo" data-ng-click="incTempo(false)"></i>
-                    </div>
-                    <div id="plus-tempo">
-                        <i class="fas fa-caret-up tempo" data-ng-click="incTempo(true)"></i>
-                    </div>
+    </div>
+    <div id="control-area">
+        <div id="line-tempo" class="grid-area-b">
+            <div class="title">
+                <p>{{d.tempo}} <br><small>BPM</small></p>
+                <div id="minus-tempo">
+                    <i class="fas fa-caret-down tempo" data-ng-click="incTempo(false)"></i>
                 </div>
-                <div id="tap" class="white-button" data-ng-click="detectTempo()">
-                    <p>Tap</p>
+                <div id="plus-tempo">
+                    <i class="fas fa-caret-up tempo" data-ng-click="incTempo(true)"></i>
                 </div>
             </div>
-            <div id="line-file">
-                <p>File</p>
-                <div id="load" class="white-button" data-ng-click="load()">
-                    <p>Load</p>
-                </div>
-            </div>
-            <div id="line-play">
-                <p>Loop</p>
-                <div id="play" class="white-button" data-ng-click="startLoop()">
-                    <p>{{d.plyTxt}}</p>
-                </div>
+            <div id="tap" class="white-button" data-ng-click="detectTempo()">
+                <p>Tap</p>
             </div>
         </div>
-
+        <div id="line-play" class="grid-area-c">
+            <div id="play" class="white-button" data-ng-click="startLoop()">
+                <p>{{d.plyTxt}}</p>
+            </div>
+        </div>
     </div>
     <div id="update-area"></div>
 </div>
