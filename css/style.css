@@ -20,20 +20,33 @@ html {
     background: #3DF4C9;
 }
 body {
+    opacity: 1;
+    margin: 0;
     font-family: 'HK Grotesk', Verdana, Geneva, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -moz-font-smoothing: grayscale;
-    opacity: 1;
+    -webkit-transition: 0.7s opacity;
+    -moz-transition: 0.7s opacity;
+    -ms-transition: 0.7s opacity;
+    -o-transition: 0.7s opacity;
     transition: 0.7s opacity;
-    -webkit-user-select: none;  /* Chrome all / Safari all */
-    -moz-user-select: none;     /* Firefox all */
-    -ms-user-select: none;      /* IE 10+ */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 body.fade {
     opacity: 0;
     transition: none;
+}
+a {
+    color: #005f42;
+    text-decoration: none;
+}
+a:hover {
+    color: white;
+    text-decoration: none;
 }
 i, .button-step, .white-button, .box-label, .click {
   cursor: pointer;
@@ -77,6 +90,20 @@ input, select {
 .black {
   color: #000000;
 }
+.slide-right {
+    -webkit-transform: translateX(300vh);
+    -moz-transform: translateX(300vh);
+    -ms-transform: translateX(300vh);
+    -o-transform: translateX(300vh);
+    transform: translateX(300vh);
+}
+.slide-left {
+    -webkit-transform: translateX(-300vh);
+    -moz-transform: translateX(-300vh);
+    -ms-transform: translateX(-300vh);
+    -o-transform: translateX(-300vh);
+    transform: translateX(-300vh);
+}
 .white-button {
     background: #3df4c9;
     border: 2px solid #005f42;
@@ -85,6 +112,11 @@ input, select {
     border-radius: 3px;
     margin: auto;
     font-weight: bold;
+}
+.white-button.selected {
+    background: #31d2ac;
+    border-color: #005f42;
+    color: #000000;
 }
 .white-button.select {
     background: #3DF4C9;
@@ -210,10 +242,104 @@ input, select {
     top: 54px;
     left: 20px;
 }
+#credit-area, #donate-area {
+    position: absolute;
+    z-index: 1001;
+    left: 14px;
+    padding: 6px;
+    color: #005f42;
+    -webkit-transition: all 500ms;
+    -moz-transition: all 500ms;
+    -ms-transition: all 500ms;
+    -o-transition: all 500ms;
+    transition: all 500ms;
+}
+#credit-area p, #donate-area p {
+    margin: 0;
+}
+#credit-area {
+    bottom: 75px;
+}
+#donate-area {
+    bottom: 50px;
+}
+#close-navigate-area {
+    text-align: center;
+    color: #005f42;
+}
+#navigate {
+    display: grid;
+    opacity: 1;
+    align-content: start;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-areas: "a a b b b c";
+
+    background-color: #3df4c9;
+    position: absolute;
+    text-align: left;
+    width: 100%;
+    height: 100%;
+    z-index: 1002;
+    padding: 30px;
+
+    -webkit-transition: all 0.7s;
+    -moz-transition: all 0.7s;
+    -ms-transition: all 0.7s;
+    -o-transition: all 0.7s;
+    transition: all 0.7s;
+}
+#navigate > div {
+    display: inline-block;
+}
+#folders div {
+    max-width: 300px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+#samples {
+    vertical-align: top;
+}
+#samples div {
+    display: inline-block;
+    min-width: 150px;
+    max-width: 300px;
+    margin:  0 5px 5px 5px;
+    vertical-align: top;
+}
+
+#open-browse-area {
+    position: absolute;
+    z-index: 1001;
+    right: 54px;
+    bottom: 74px;
+    padding: 6px;
+    color: #005f42;
+    border: 2px solid #3df4c9;
+    background-color: #3df4c9;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    -webkit-transition: all 500ms;
+    -moz-transition: all 500ms;
+    -ms-transition: all 500ms;
+    -o-transition: all 500ms;
+    transition: all 500ms;
+}
 #browse-area {
     width: 300px;
     top: 54px;
     right: 20px;
+}
+#browse-area:after {
+    content  : "";
+    position : absolute;
+    z-index  : 1;
+    bottom   : 0;
+    left     : 0;
+    pointer-events: none;
+    background-image: linear-gradient(to bottom, rgba(255,255,255, 0), rgb(61, 244, 201) 100%);
+    width    : 100%;
+    height   : 4em;
 }
 #edit-area .fa-times-circle {
     position: absolute;
@@ -383,8 +509,8 @@ input, select {
     right: 0;
     bottom: 0;
     background: #3df4c9;
-    z-index: 999;
-    height: 150px;
+    z-index: 1000;
+    height: 118px;
 }
 #control-area > div {
     display: inline-block;
@@ -395,6 +521,13 @@ input, select {
 
 #control-area div > div {
     display: inline-grid;
+}
+#latest-pattern {
+    position: relative;
+    display: block;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 50vh;
 }
 #surface {
     display: block;
@@ -410,11 +543,15 @@ input, select {
     margin: 0 5px;
     padding: 0 5px;
 }
-
+#inst-new > div{
+    display: inline-table;
+}
 .inst-new-par {
     display: inline-block;
     position: relative;
-    margin: 0 5px;
+    vertical-align: middle;
+    margin: 0 20px;
+    height: auto;
 }
 
 div#simple-set > div {

@@ -1,7 +1,7 @@
 <!doctype html>
 <html data-ng-app="drummachineApp">
 <head>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/fontawesome.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/toastr.min.css">
     <script src="js/lib/jquery-3.3.1.min.js"></script>
@@ -13,6 +13,17 @@
     <title>NuDrum</title>
 </head>
 <body data-ng-controller="DmController as d" class="fade">
+<div id="open-browse-area" style="display: none;" class="slide-right click" data-ng-click="openBrowseArea()"><i class="fas fa-ellipsis-v"></i> PATTERN</div>
+<div id="credit-area"><p><i class="fab fa-github"></i> Made by  <a href="https://github.com/toboko/NuDrum">@toboko</a></p></div>
+<div id="donate-area"><p><a  href="https://www.paypal.me/NicolaBombaci"><i class="fas fa-heart"></i> Donate if you like </a></p></div>
+
+<div id="navigate" class="slide-right" style="display: none;">
+    <div id="folders" class="grid-area-a"></div>
+    <div id="samples" class="grid-area-b"></div>
+    <div id="close-navigate-area" data-ng-click="closeNavigateArea()" class="grid-area-c">
+        <p class="click"><i  class="fas fa-times"></i> CLOSE</p>
+    </div>
+</div>
 <div id="surface">
     <div id="edit-area">
         <p class="title">
@@ -121,9 +132,9 @@
                         <div class="inst-new-par step-height">
                             <input id="inst-new-name" aria-label="inst-new-name" type="text" placeholder="Name" />
                         </div>
-                        <div  id="inst-new-sample" class="inst-new-par step-height">
-                            <strong>Sound</strong>
-                            <select id="inst-sound-type"></select>
+                        <div  id="browse-new-sample" class="inst-new-par step-height">
+                            <strong class="" data-ng-click="openNavigateArea()">Sound Library <i class="fas fa-folder-open"></i></strong><br>
+                            <small>{{d.sampleOn}}</small>
                         </div>
                         <div  id="inst-new-beat" class="inst-new-par step-height">
                             <strong>Beat</strong>

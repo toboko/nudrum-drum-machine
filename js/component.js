@@ -82,6 +82,7 @@ Attack doesn't work after the first playback of a sound (Chrome)
 
 app.controller("DmController", function($scope, $compile) {
   const d = this;
+
 	// Initialize Firebase
   const config = {
 	  apiKey: "AIzaSyCPrwHHgupU8jXdlnuulh9_yTYn-Ry2Gqc",
@@ -97,49 +98,6 @@ app.controller("DmController", function($scope, $compile) {
   const storage = firebase.storage();
 
   const db = firebase.database();
-
-	// On load update latest samples link
-	// TODO: Save this in cache. If not exists download over firebase
-	db.ref("samples/").on("value", data => {
-
-		if (data.exists()) {
-			let ones = true,
-				child,
-				types = Object.entries(data.val());
-
-			types.forEach(function (type) {
-				child = document.createElement('optgroup');
-				child.setAttribute('id', 'group-' + type[0]);
-				child.setAttribute('label', type[0]);
-
-				document.getElementById("inst-sound-type").appendChild(child);
-
-				let elements = Object.entries(type[1]);
-				elements.forEach(function (element) {
-
-					if (ones) {
-						child = document.createElement('option');
-						child.setAttribute('selected', 'selected');
-						child.setAttribute('name', element[0]);
-						child.setAttribute('value', type[0] + '/' + element[0] + '.wav');
-						child.innerHTML = type[0] + ' ' + element[0];
-
-						document.getElementById('group-' + type[0]).appendChild(child);
-						ones = false;
-
-					} else {
-						child = document.createElement('option');
-						child.setAttribute('name', element[0]);
-						child.setAttribute('value', type[0] + '/' + element[0] + '.wav');
-						child.innerHTML = type[0] + ' ' + element[0];
-
-						document.getElementById('group-' + type[0]).appendChild(child);
-
-					}
-				})
-			});
-		}
-	});
 
   // On load update latest pattern uploaded
   db.ref("patterns/").orderByChild("when").on("value", data => {
@@ -209,9 +167,6 @@ app.controller("DmController", function($scope, $compile) {
   // TONE ~ Hz Value
   const MAXTONE = 2000;
   const MINTONE = 130;
-  // KNOB ROTATIONS ~ degree Value
-  const MAXROTATION = 125;
-  const MINROTATION = -MAXROTATION;
 
   let playing = false; // play/stop
   let toutPly = null; // playing timeout
@@ -222,6 +177,7 @@ app.controller("DmController", function($scope, $compile) {
   let avgTempo = [0, 0, 0, 0, 0, 0];
 
   d.trkOn = 0; // index track selected
+	d.sampleOn = '';
   d.tempo  = DEFAULTTEMPO;
   d.plyTxt = "PLAY";
 
@@ -255,10 +211,18 @@ app.controller("DmController", function($scope, $compile) {
 	};
 
 	$scope.$watch('$viewContentLoaded', function(){
+		let body = document.body,
+				html = document.documentElement;
+		let h = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+		let w = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
+
+		$scope.initSearch();
+
+		document.getElementById('latest-pattern').style.height = (h - 673) + 'px';
 		// fade in
-		document.body.classList.remove('fade');
+		body.classList.remove('fade');
 		// play with spacebar
-		document.body.onkeyup = function(e){
+		body.onkeyup = function(e){
 			if(e.keyCode == 32){
 				$scope.startLoop();
 			}
@@ -272,6 +236,166 @@ app.controller("DmController", function($scope, $compile) {
 		}
 	});
 
+	$scope.initSearch = function () {
+		// On load update latest samples link
+		db.ref("samples/").once("value", data => {
+			console.log('new folder')
+
+			if (data.exists()) {
+				let ones = true,
+					sample,
+					folder,
+					$el,
+					types = Object.entries(data.val());
+
+				types.forEach(function (type, index) {
+					folder = document.createElement('div');
+					folder.classList.add('white-button', 'folder');
+					if (index === 0) folder.classList.add('selected');
+					folder.setAttribute('ng-click', 'searchFolder(\'' + type[0] + '\')');
+					folder.setAttribute('id', type[0]);
+
+					folder.innerHTML = '<p>' + type[0] + '</p>';
+
+					$el = document.getElementById("folders").appendChild(folder);
+					$compile($el)($scope);
+
+					if (ones) {
+						$scope.searchFolder(type[0]);
+						ones = false;
+					}
+				});
+			}
+		});
+	}
+
+	$scope.searchFolder = function(value) {
+		db.ref("samples/" + value).on("value", data => {
+
+			if (data.exists()) {
+				let ones = true,
+					sample,
+					$el,
+					file,
+					types = Object.entries(data.val());
+
+				document.getElementById('folders').querySelectorAll('.folder').forEach(function (value) {
+					value.classList.remove('selected');
+				});
+				document.getElementById(value).classList.add('selected')
+
+				// Upload button
+				document.getElementById('samples').innerHTML = '';
+				sample = document.createElement('div');
+				sample.classList.add('white-button');
+				sample.innerHTML = '<p ng-click="uploadSample(\'' + value + '\')"><i class="fas fa-upload" ng></i> Upload to "' + value + '"</p><input id="input-file-upload" type="file"/>';
+
+				$el = document.getElementById('samples').appendChild(sample);
+				$compile($el)($scope);
+
+				// Samples
+				types.forEach(function (element) {
+					// extract file name
+					file = element[1].url;
+					file = file.substr(file.indexOf(value) + value.length + 3 , file.length)
+					file = file.substr(0, file.indexOf('?'));
+					// append file
+					sample = document.createElement('div');
+					sample.classList.add('white-button', 'sample')
+					sample.setAttribute('data-sample',value + '/' + file)
+					sample.setAttribute('ng-click','selectSample($event)')
+
+					sample.innerHTML = '<p>' + element[0] + '</p>';
+
+					$el = document.getElementById('samples').appendChild(sample);
+					$compile($el)($scope);
+				});
+			}
+		});
+	}
+
+	$scope.selectSample = function (event) {
+		document.getElementById('samples').querySelectorAll('.sample').forEach(function (value) {
+			value.classList.remove('selected');
+		});
+		d.sampleOn = event.currentTarget.getAttribute('data-sample');
+		event.currentTarget.classList.add('selected');
+		$scope.playDemoSample(d.sampleOn);
+	}
+
+	$scope.uploadSample = function (path) {
+		// File or Blob named mountains.jpg
+		let file = document.getElementById('input-file-upload').files[0];
+		if (typeof file === 'undefined' || file === null) {
+			toastr.warning('Select an audio file to start the upload');
+			return false;
+		}
+
+		// Create the file metadata
+		let metadata = {
+			contentType: file.type
+		};
+
+		// Upload file and metadata to the object 'images/mountains.jpg'
+		let uploadTask = storage.ref(path).child(file.name).put(file, metadata);
+
+		// Listen for state changes, errors, and completion of the upload.
+		uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+			function(snapshot) {
+				switch (snapshot.state) {
+					case firebase.storage.TaskState.PAUSED: // or 'paused'
+						toastr.warning('Upload is paused');
+						break;
+					case firebase.storage.TaskState.RUNNING: // or 'running'
+						toastr.info('Upload is running');
+						break;
+				}
+			}, function(error) {
+
+				// A full list of error codes is available at
+				// https://firebase.google.com/docs/storage/web/handle-errors
+				switch (error.code) {
+					case 'storage/unauthorized':
+						toastr.error('User doesn\'t have permission to access the object');
+						break;
+
+					case 'storage/canceled':
+						// User canceled the upload
+						toastr.error('User canceled the upload');
+						break;
+
+					case 'storage/unknown':
+						toastr.error('Unknown error occurred');
+						break;
+				}
+			}, function() {
+				// Upload completed successfully, now we can get the download URL
+				uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+					let name = file.name.replace(/\.[^/.]+$/, "");
+					db.ref("samples/" + path + '/' + name).set({url: downloadURL},
+						function (error) {
+							if (error) {
+								// The write failed...
+								toastr.error('Unknown error during the upload');
+							} else {
+								// Data saved successfully!
+								toastr.success('Sample uploaded', 'Success');
+							}
+						}
+					);
+				});
+			});
+	}
+
+	$scope.playDemoSample = function(sample) {
+		toastr.options.timeOut = 1;
+		toastr.info('Loading demo audio sample');
+		storage.ref(sample).getDownloadURL().then(function (url) {
+			var audio = new Audio(url);
+			audio.play();
+		});
+	}
+
 	$scope.loadSample = function(sample, inst) {
 		storage.ref(sample).getDownloadURL().then(function (url) {
 			d.pattern[inst].inst.audio = (
@@ -284,6 +408,8 @@ app.controller("DmController", function($scope, $compile) {
 					}
 				})
 			);
+
+			$scope.resetClock(inst);
 
 			// Remove blur on loading
 			let filterVal = 'blur(0px)';
@@ -302,6 +428,8 @@ app.controller("DmController", function($scope, $compile) {
 				value.style.webkitFilter = filterVal;
 				value.style.pointerEvents = 'visible'
 			});
+
+			$scope.forkUpUi(inst);
 
 		}).catch(function(error) {
 			// Handle any errors
@@ -441,7 +569,7 @@ app.controller("DmController", function($scope, $compile) {
   };
 
   $scope.setVolume = function(inc, inst) {
-    let newvol = d.pattern[inst].vol;
+    let newvol = d.pattern[inst].inst.vol;
     newvol = inc ? (newvol += 1) : (newvol -= 1);
     newvol = newvol <= 0 ? 0 : newvol;
     newvol = newvol >= 10 ? 10 : newvol;
@@ -467,25 +595,64 @@ app.controller("DmController", function($scope, $compile) {
 	};
 
 	$scope.select = function(inst) {
-		let filterVal = '0'
 		let el = document.getElementById('edit-area');
-		el.style.webkitTransform = "translateX(" + filterVal + ")";
-		el.style.transform = "translateX(" + filterVal + ")";
+		el.style.display = null;
+		setTimeout(function() {
+			el.classList.remove('slide-left');
+		}, 50);
 		d.trkOn = inst;
 	};
 
 	$scope.closeEditArea = function() {
-		let filterVal = '-100vh'
 		let el = document.getElementById('edit-area');
-		el.style.webkitTransform = "translateX(" + filterVal + ")";
-		el.style.transform = "translateX(" + filterVal + ")";
+		el.classList.add('slide-left');
+		setTimeout(function() {
+			el.style.display = 'none';
+		}, 50);
+	};
+
+	$scope.closeNavigateArea = function() {
+		let el = document.getElementById('navigate');
+		el.classList.add('slide-right');
+		setTimeout(function() {
+			el.style.display = 'none';
+		}, 500);
 	};
 
 	$scope.closeBrowseArea = function() {
-		let filterVal = '100vh'
 		let el = document.getElementById('browse-area');
-		el.style.webkitTransform = "translateX(" + filterVal + ")";
-		el.style.transform = "translateX(" + filterVal + ")";
+		el.classList.add('slide-right');
+		setTimeout(function() {
+			el.style.display = 'none';
+
+			el = document.getElementById('open-browse-area');
+			el.style.display = null;
+			setTimeout(function() {
+				el.classList.remove('slide-right');
+			}, 50);
+		}, 50);
+	};
+
+	$scope.openNavigateArea = function() {
+		let el = document.getElementById('navigate');
+		el.style.display = null;
+		setTimeout(function() {
+			el.classList.remove('slide-right');
+		}, 50);
+	};
+
+	$scope.openBrowseArea = function() {
+		let el = document.getElementById('browse-area');
+		el.style.display = null;
+		setTimeout(function() {
+			el.classList.remove('slide-right');
+
+			el = document.getElementById('open-browse-area');
+			el.classList.add('slide-right');
+			setTimeout(function() {
+				el.style.display = 'none';
+			}, 50);
+		}, 50);
 	};
 
   /* Pattern Functions
@@ -547,8 +714,6 @@ app.controller("DmController", function($scope, $compile) {
 	  }
   };
 
-
-
   $scope.load = function(key) {
   	key = (typeof key !== 'undefined') ? key : document.getElementById('pattern-load-name').value;
 
@@ -557,6 +722,11 @@ app.controller("DmController", function($scope, $compile) {
 	  } else {
 		  db.ref("patterns/" + key).on("value", snapshot => {
 			  if (snapshot.exists()) {
+
+			  	if (playing) {
+					  // Stop Playing
+					  $scope.startLoop();
+				  }
 				  // Data read successfully!
 				  let data = snapshot.val();
 				  d.pattern = JSON.parse(data.pattern);
@@ -564,8 +734,6 @@ app.controller("DmController", function($scope, $compile) {
 				  d.tempo = data.tempo;
 
 				  $scope.loadAllSample();
-				  $scope.resetClock();
-				  $scope.forkUpUi();
 			  } else {
 				  // The read failed...
 			  }
@@ -597,7 +765,7 @@ app.controller("DmController", function($scope, $compile) {
   $scope.checkMix = function() {
     d.pattern.forEach(function(value) {
       if (value.inst.audio != null && !value.mute)
-        value.inst.audio.volume = value.vol / MAXVOLUME;
+        value.inst.audio.volume = value.inst.vol / MAXVOLUME;
     });
   };
 
@@ -617,8 +785,9 @@ app.controller("DmController", function($scope, $compile) {
    *
    * **/
   $scope.resetClock = function( inst ) {
-    let patterns = (typeof inst !== 'undefined') ? inst : d.pattern;
+    let patterns = (typeof inst !== 'undefined') ? Array(inst) : d.pattern;
     patterns.forEach(function(element, index) {
+    	element.inst.audio.stop();
 	    if (element.view < element.beat.offset) {
 		    // Shift left steps to restore the original position
 		    lshft(element.steps, element.cycle * element.view)
@@ -645,7 +814,7 @@ app.controller("DmController", function($scope, $compile) {
 		    value.classList.remove('clock');
 	    })
       // change status text
-      d.plyTxt = "START";
+      d.plyTxt = "PLAY";
 
       $scope.forkUpUi();
 
@@ -727,17 +896,20 @@ app.controller("DmController", function($scope, $compile) {
 
 
   $scope.newInst = function () {
-	  let nameinst = document.getElementById('inst-new-name').value;
+	  let name = document.getElementById('inst-new-name').value;
 
 	  if (playing) {
 		  toastr.warning('Instruments cannot be created while playing', 'Instrument Rules')
 	  } else {
 
-		  if (nameinst === '') {
+		  if (name === '') {
 			  toastr.warning('<strong>Name</strong> is required');
 
+		  } else if (d.sampleOn === '' || d.sampleOn === null) {
+			  toastr.warning('Select an <strong>Instrument</strong> from the library');
+
 		  } else {
-			  d.newpattern.inst.text = nameinst;
+			  d.newpattern.inst.text = name;
 			  d.pattern.push(d.newpattern);
 			  d.newpattern = {
 				  inst: {text: '', mute: false, vol: 5, audio: null},
@@ -748,11 +920,12 @@ app.controller("DmController", function($scope, $compile) {
 				  steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			  };
 
-			  let urlinst = document.getElementById('inst-sound-type').value;
+			  d.defSamples.push(d.sampleOn);
 
-			  d.defSamples.push(urlinst);
+			  $scope.loadSample(d.sampleOn, d.pattern.length - 1);
 
-			  $scope.loadSample(urlinst, d.pattern.length - 1);
+			  d.sampleOn = ''
+			  document.getElementById('inst-new-name').value = ''
 		  }
 	  }
   };
