@@ -1,5 +1,7 @@
 # NuDrum
 
+![NuDrum logo](/img/favicon/mstile-144x144.png)
+
 Minimalist poly rhythm and poly metric drum machine
 
 [Demo](https://nudrum.netlify.com/) hosted by [Netlify](https://netlify.com/)

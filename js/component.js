@@ -24,14 +24,7 @@ const short = function() {
 	return out.join("");
 };
 
-norm = function (i, l) {
-  if (i > l) {
-    i = i - l;
-  }
-  return (i === 0) ? 1 : i;
-};
-
-normal = function (i, l, a = true) {
+const normal = function (i, l, a = true) {
 	i = i % l;
 	return (i === 0 && a) ? l : i;
 };
@@ -239,8 +232,6 @@ app.controller("DmController", function($scope, $compile) {
 	$scope.initSearch = function () {
 		// On load update latest samples link
 		db.ref("samples/").once("value", data => {
-			console.log('new folder')
-
 			if (data.exists()) {
 				let ones = true,
 					sample,
@@ -844,7 +835,7 @@ app.controller("DmController", function($scope, $compile) {
     });
 
     // inc global clock value
-    idxClk = norm((idxClk + 1), d.beat[32].offset);
+    idxClk = normal((idxClk + 1), d.beat[32].offset);
 
     // timeout loop
     toutPly = window.setTimeout(function() {
