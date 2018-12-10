@@ -191,12 +191,12 @@ app.controller("DmController", function($scope, $compile) {
   ];
 
   d.pattern = Array(
-    { inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+    { inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+    { inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
   );
 
 	d.newpattern = {
@@ -211,7 +211,7 @@ app.controller("DmController", function($scope, $compile) {
 
 		$scope.initSearch();
 
-		document.getElementById('latest-pattern').style.height = (h - 673) + 'px';
+		document.getElementById('latest-pattern').style.height = (h - 273) + 'px';
 		// fade in
 		body.classList.remove('fade');
 		// play with spacebar
@@ -572,6 +572,31 @@ app.controller("DmController", function($scope, $compile) {
       d.pattern[inst].inst.audio.volume = newvol / MAXVOLUME;
     }
   };
+
+  $scope.shiftR = function(inst) {
+  	let pattern = d.pattern[inst];
+  	rshft(pattern.steps, 1);
+  	pattern.shift = (pattern.shift += 1);
+
+  	if (pattern.shift > pattern.view) {
+  		pattern.shift = 0;
+	  }
+
+  	$scope.forkUpUi(inst);
+  }
+
+	$scope.shiftL = function(inst) {
+		let pattern = d.pattern[inst];
+
+		lshft(pattern.steps, 1);
+		pattern.shift = (pattern.shift -= 1);
+
+		if (pattern.shift < -pattern.view) {
+			pattern.shift = 0;
+		}
+
+		$scope.forkUpUi(inst);
+	}
 
 	$scope.delete = function(inst) {
 		d.pattern.splice(inst, 1);
@@ -1019,17 +1044,5 @@ app.directive('onLastRepeat', function() {
     if (scope.$last) {
       scope.$emit('onRepeatLast', element, attrs);
     }
-  };
-});
-
-app.filter('range', function() {
-  return function(input, total) {
-    total = parseInt(total);
-
-    for (let i=0; i<total; i++) {
-      input.push(i);
-    }
-
-    return input;
   };
 });

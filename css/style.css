@@ -290,6 +290,8 @@ input, select {
 }
 #navigate > div {
     display: inline-block;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 #folders div {
     max-width: 300px;
@@ -412,7 +414,8 @@ input, select {
     text-align: center;
 }
 .line-insts {
-    margin-bottom: 5px;
+    margin-bottom: 80px;
+    margin-top: 25px;
     position: relative;
 }
 .line-inst {
@@ -437,21 +440,13 @@ input, select {
 .line-inst-padding {
     padding: 2px;
 }
-#line-tempo {
-  margin-bottom: 34px;
-}
 #line-tempo .title {
     position: relative;
-  width: 89px;
+    width: 89px;
     height: 56px;
 }
 #line-tempo .title p{
-    margin-left: 15px;
-}
-#line-tempo .title small{
-    margin-top: 17px;
-    position: absolute;
-    right: 14px;
+    margin-top: 5px;
 }
 #tap {
   width: 89px;
@@ -501,10 +496,10 @@ input, select {
     display: grid;
     align-content: center;
     grid-template-columns: repeat(8, 1fr);
-    grid-template-areas: "a a b b b c d d";
+    grid-template-areas: "a a b b b b c c";
     position: absolute;
     margin: auto;
-    text-align: left;
+    text-align: center;
     left: 0;
     right: 0;
     bottom: 0;
@@ -512,15 +507,13 @@ input, select {
     z-index: 1000;
     height: 118px;
 }
-#control-area > div {
-    display: inline-block;
-}
 #control-area > div > p {
     text-align: left;
 }
 
 #control-area div > div {
-    display: inline-grid;
+    display: inline-block;
+    vertical-align: middle;
 }
 #latest-pattern {
     position: relative;

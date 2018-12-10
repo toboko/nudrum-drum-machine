@@ -6,6 +6,15 @@ Minimalist poly rhythm and poly metric drum machine
 
 [Demo](https://nudrum.netlify.com/) hosted by [Netlify](https://netlify.com/)
 
+## Standalone App
+You can build your own standalone floating app thanks to 
+[Electron](https://electronjs.org/)<br>
+
+    
+    git clone https://github.com/toboko/NuDrum
+    npm install
+    npm start
+
 ## Write Rules
 
 Allow write files to the path:
@@ -19,7 +28,7 @@ subject to the constraints:
     4. File name is less than 32 characters
      
 ## Dependencies
-[Toastr](https://github.com/CodeSeven/toastr) - Simple javascript toast notificationa <br>
+[Toastr](https://github.com/CodeSeven/toastr) - Simple javascript toast notification <br>
 [Pizzicato.js](https://github.com/alemangui/pizzicato) - Library to simplify the way you create and manipulate sounds with the Web Audio API <br>
 [jQuery](https://github.com/jquery/jquery) - jQuery JavaScript Library 
 

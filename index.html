@@ -4,22 +4,24 @@
     <link rel="stylesheet" href="css/fontawesome.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/toastr.min.css">
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="js/lib/jquery-3.3.1.min.js"></script>
     <script src="js/lib/md5.min.js"></script>
     <script src="js/lib/pizzicato.min.js"></script>
     <script src="js/lib/angular.min.js"></script>
     <script src="js/lib/toastr.min.js"></script>
-    <meta charset="utf-8">
-
+    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+    <script src="js/component.js"></script>
+    <script>if (window.module) module = window.module;</script>
     <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
     <link rel="manifest" href="/img/favicon/site.webmanifest">
     <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta charset="utf-8">
     <meta name="msapplication-TileColor" content="#00aba9">
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
     <meta name="theme-color" content="#ffffff">
-
     <title>NuDrum</title>
 </head>
 <body data-ng-controller="DmController as d" class="fade">
@@ -62,6 +64,14 @@
             </div>
         </div>
         <div class="line-set">
+            <div class="grid-area-a">
+                <p class="title">shift</p>
+                <i class="fas fa-caret-up" data-ng-click="shiftR(d.trkOn)"></i>
+                <p class="value">{{d.pattern[d.trkOn].shift}}</p>
+                <i class="fas fa-caret-down" data-ng-click="shiftL(d.trkOn)"></i>
+            </div>
+        </div>
+        <div class="line-set">
             <div class="offset grid-area-b">
                 <p class="click" data-ng-click="delete(d.trkOn)"><i class="fas fa-trash"></i> Delete</p>
             </div>
@@ -99,15 +109,6 @@
     </div>
     <div id="window">
         <div id="main-area">
-            <div class="line-units">
-                <div ng-repeat="n in [] | range:16" class="unit">
-                    <span>
-                        <strong ng-if="n > 9" class="right-max">{{$index + 1}}</strong>
-                        <strong ng-if="n <= 9" class="right-min">{{$index + 1}}</strong>
-                        <br>|
-                    </span>
-                </div>
-            </div>
             <div class="line-insts">
                 <div class="line-labels">
                     <div data-ng-repeat="label in d.pattern track by $index"
@@ -166,29 +167,29 @@
         </div>
     </div>
     <div id="control-area">
-        <div id="line-tempo" class="grid-area-b">
-            <div class="title">
-                <p>{{d.tempo}} <br><small>BPM</small></p>
-                <div id="minus-tempo">
-                    <i class="fas fa-caret-down tempo" data-ng-click="incTempo(false)"></i>
+        <div class="grid-area-b">
+            <div id="line-tempo" >
+                <div class="title">
+                    <p>{{d.tempo}} <br><small>BPM</small></p>
+                    <div id="minus-tempo">
+                        <i class="fas fa-caret-down tempo" data-ng-click="incTempo(false)"></i>
+                    </div>
+                    <div id="plus-tempo">
+                        <i class="fas fa-caret-up tempo" data-ng-click="incTempo(true)"></i>
+                    </div>
                 </div>
-                <div id="plus-tempo">
-                    <i class="fas fa-caret-up tempo" data-ng-click="incTempo(true)"></i>
+                <div id="tap" class="white-button" data-ng-click="detectTempo()">
+                    <p>Tap</p>
                 </div>
             </div>
-            <div id="tap" class="white-button" data-ng-click="detectTempo()">
-                <p>Tap</p>
+            <div id="line-play" class="">
+                <div id="play" class="white-button" data-ng-click="startLoop()">
+                    <p>{{d.plyTxt}}</p>
+                </div>
             </div>
         </div>
-        <div id="line-play" class="grid-area-c">
-            <div id="play" class="white-button" data-ng-click="startLoop()">
-                <p>{{d.plyTxt}}</p>
-            </div>
-        </div>
+
     </div>
-    <div id="update-area"></div>
 </div>
-<script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
-<script src="js/component.js?v=2"></script>
 </body>
 </html>
