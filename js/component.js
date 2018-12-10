@@ -200,7 +200,7 @@ app.controller("DmController", function($scope, $compile) {
   );
 
 	d.newpattern = {
-	  inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+	  inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 	};
 
 	$scope.$watch('$viewContentLoaded', function(){
