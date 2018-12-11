@@ -66,9 +66,9 @@
         <div class="line-set">
             <div class="grid-area-a">
                 <p class="title">shift</p>
-                <i class="fas fa-caret-up" data-ng-click="shiftR(d.trkOn)"></i>
+                <i class="fas fa-caret-up" data-ng-click="shift(true, d.trkOn)"></i>
                 <p class="value">{{d.pattern[d.trkOn].shift}}</p>
-                <i class="fas fa-caret-down" data-ng-click="shiftL(d.trkOn)"></i>
+                <i class="fas fa-caret-down" data-ng-click="shift(false, d.trkOn)"></i>
             </div>
         </div>
         <div class="line-set">

@@ -516,13 +516,14 @@ app.controller("DmController", function($scope, $compile) {
 					  }
 				  }
 			  });
-
+				// New offset
+			  if (d.pattern[inst].view === d.pattern[inst].beat.offset || d.pattern[inst].view > d.beat[newbeat].offset) {
+				  d.pattern[inst].view = newoffset;
+			  }
 			  // New Beat
 			  d.pattern[inst].beat = d.beat[newbeat];
 			  // Update Matrix
 			  d.pattern[inst].steps = tempsteps;
-			  // New offset
-			  d.pattern[inst].view = (d.pattern[inst].view > newoffset) ? newoffset : d.pattern[inst].view;
 
 		  } else {
 			  // New Beat
@@ -573,16 +574,27 @@ app.controller("DmController", function($scope, $compile) {
     }
   };
 
-  $scope.shiftR = function(inst) {
+  $scope.shift = function(inc, inst) {
   	let pattern = d.pattern[inst];
-  	rshft(pattern.steps, 1);
-  	pattern.shift = (pattern.shift += 1);
+	  let temp   = pattern.steps;
+	  let acc = Array(pattern.beat.offset - pattern.view).fill(0)
+	  let sliced = temp.slice(0, pattern.view);
 
-  	if (pattern.shift > pattern.view) {
-  		pattern.shift = 0;
+	  if (inc) {
+		  pattern.shift = (pattern.shift += 1);
+		  rshft(sliced, 1);
+	  } else {
+		  pattern.shift = (pattern.shift -= 1);
+		  lshft(sliced, 1);
 	  }
 
-  	$scope.forkUpUi(inst);
+	  if (pattern.shift > (pattern.view - 1) || pattern.shift < (-pattern.view + 1)) {
+		  pattern.shift = 0;
+	  }
+
+	  pattern.steps = sliced.concat(acc);
+
+	  $scope.forkUpUi(inst);
   }
 
 	$scope.shiftL = function(inst) {
