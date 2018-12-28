@@ -77,7 +77,7 @@ app.controller("DmController", function($scope, $compile) {
   const d = this;
 
 	// Initialize Firebase
-  const config = {
+  const configDb = {
 	  apiKey: "AIzaSyCPrwHHgupU8jXdlnuulh9_yTYn-Ry2Gqc",
 	  authDomain: "nudrum-app.firebaseapp.com",
 	  databaseURL: "https://nudrum-app.firebaseio.com",
@@ -86,7 +86,7 @@ app.controller("DmController", function($scope, $compile) {
 	  messagingSenderId: "1098853194105"
   };
 
-  firebase.initializeApp(config);
+  firebase.initializeApp(configDb);
 
   const storage = firebase.storage();
 
@@ -157,9 +157,6 @@ app.controller("DmController", function($scope, $compile) {
   const DEFAULTTEMPO = 120;
   const MAXTEMPO = 300;
   const MINTEMPO = 40;
-  // TONE ~ Hz Value
-  const MAXTONE = 2000;
-  const MINTONE = 130;
 
   let playing = false; // play/stop
   let toutPly = null; // playing timeout
@@ -181,27 +178,30 @@ app.controller("DmController", function($scope, $compile) {
     32: { id: 32, offset:64, text: "1/32", rate: 1, ms: 7500 }
   };
 
-  d.defSamples = [
-    "Kick/Classic.wav",
-    "Snare/Classic.wav",
-    "Tom/ClassicMid.wav",
-    "Rim/Classic.wav",
-    "HitHat/ClassicClose.wav",
-    "Crash/Classic.wav",
-  ];
-
-  d.pattern = Array(
-    { inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-    { inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
-  );
+	d.samples = Array();
+  d.pattern = Array();
 
 	d.newpattern = {
 	  inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 	};
+
+	d.defsamples = Array(
+		"Kick/Classic.wav",
+		"Snare/Classic.wav",
+		"Tom/ClassicMid.wav",
+		"Rim/Classic.wav",
+		"HitHat/ClassicClose.wav",
+		"Crash/Classic.wav",
+	);
+
+	d.defpattern = Array(
+		{ inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+	);
 
 	$scope.$watch('$viewContentLoaded', function(){
 		let body = document.body,
@@ -222,10 +222,11 @@ app.controller("DmController", function($scope, $compile) {
 		}
 		// load url pattern
 		let loadPat = findGetParameter("p");
+
 		if (loadPat !== null) {
 			$scope.load(loadPat);
 		} else {
-			$scope.loadAllSample();
+			$scope.load('default');
 		}
 	});
 
@@ -382,7 +383,7 @@ app.controller("DmController", function($scope, $compile) {
 		toastr.options.timeOut = 1;
 		toastr.info('Loading demo audio sample');
 		storage.ref(sample).getDownloadURL().then(function (url) {
-			var audio = new Audio(url);
+			let audio = new Audio(url);
 			audio.play();
 		});
 	}
@@ -400,27 +401,34 @@ app.controller("DmController", function($scope, $compile) {
 				})
 			);
 
-			$scope.resetClock(inst);
 
-			// Remove blur on loading
-			let filterVal = 'blur(0px)';
-			document.getElementById("set-" + inst)
-				.querySelectorAll("p")
-				.forEach(function (value) {
-				value.style.filter = filterVal;
-				value.style.webkitFilter = filterVal;
-				value.style.pointerEvents = 'visible'
-			});
+			setTimeout(function () {
+				let set = document.getElementById("set-" + inst);
+				let filterVal = 'blur(0px)';
 
-			document.getElementById("inst-" + inst)
-				.querySelectorAll(".button-step")
-				.forEach(function (value) {
-				value.style.filter = filterVal;
-				value.style.webkitFilter = filterVal;
-				value.style.pointerEvents = 'visible'
-			});
+				// Remove loading icon
+				set.querySelector(".fa-2x").style.zIndex = '0';
 
-			$scope.forkUpUi(inst);
+				// Remove blur on loading
+				set.querySelectorAll("p")
+					.forEach(function (value) {
+						value.style.filter = filterVal;
+						value.style.webkitFilter = filterVal;
+						value.style.pointerEvents = 'visible'
+					});
+
+				document.getElementById("inst-" + inst)
+					.querySelectorAll(".button-step")
+					.forEach(function (value) {
+						value.style.filter = filterVal;
+						value.style.webkitFilter = filterVal;
+						value.style.pointerEvents = 'visible'
+					});
+
+				$scope.resetClock(inst);
+				$scope.updateStepsRoot(inst);
+			}, 500)
+
 
 		}).catch(function(error) {
 			// Handle any errors
@@ -429,7 +437,7 @@ app.controller("DmController", function($scope, $compile) {
 	};
 
 	$scope.loadAllSample = function() {
-		d.defSamples.forEach(function (value, index) {
+		d.samples.forEach(function (value, index) {
 			$scope.loadSample(value, index);
 		})
 	};
@@ -555,7 +563,7 @@ app.controller("DmController", function($scope, $compile) {
 
 		  } else {
 			  pattern.view = newoffset;
-			  $scope.forkUpUi(inst)
+			  $scope.updateStepsRoot(inst)
 		  }
 	  }
   };
@@ -594,7 +602,7 @@ app.controller("DmController", function($scope, $compile) {
 
 	  pattern.steps = sliced.concat(acc);
 
-	  $scope.forkUpUi(inst);
+	  $scope.updateStepsRoot(inst);
   }
 
 	$scope.shiftL = function(inst) {
@@ -607,19 +615,19 @@ app.controller("DmController", function($scope, $compile) {
 			pattern.shift = 0;
 		}
 
-		$scope.forkUpUi(inst);
+		$scope.updateStepsRoot(inst);
 	}
 
 	$scope.delete = function(inst) {
 		d.pattern.splice(inst, 1);
-		d.defSamples.splice(inst, 1)
+		d.samples.splice(inst, 1)
 		d.trkOn = 0;
 
 		if (d.pattern.length === 0) {
 		  $scope.closeEditArea()
     }
 
-		$scope.forkUpUi()
+		$scope.updateStepsRoot()
 	};
 
 	$scope.select = function(inst) {
@@ -694,6 +702,10 @@ app.controller("DmController", function($scope, $compile) {
     let id = short();
     // copy pattern
     let pattern = JSON.parse(JSON.stringify(d.pattern));
+    if (pattern.length <= 0) {
+	    toastr.warning('<strong>Pattern</strong> cannot be empty');
+	    return 0;
+    }
     // normalize the pattern
     // - clock to 0
     // - audio to null
@@ -703,14 +715,15 @@ app.controller("DmController", function($scope, $compile) {
     });
 	  pattern = JSON.stringify(pattern);
 
-	  let samples = JSON.stringify(d.defSamples);
+	  let samples = JSON.stringify(d.samples);
     let when = Date.now();
     let hash = md5(pattern);
     let title = document.getElementById('pattern-new-name').value;
 	  let tempo = d.tempo;
 
 	  if (title === '') {
-	  	toastr.warning('<strong>Name</strong> is required')
+	  	toastr.warning('<strong>Name</strong> is required');
+
 	  } else {
 		  // check if there is duplicated pattern
 		  db.ref("patterns").orderByChild("hash").equalTo(hash).on("value", snapshot => {
@@ -737,6 +750,8 @@ app.controller("DmController", function($scope, $compile) {
 							  }
 						  }
 					  );
+				  } else {
+					  toastr.warning('<strong>Pattern</strong> already exists');
 				  }
 			  });
 	  }
@@ -747,9 +762,17 @@ app.controller("DmController", function($scope, $compile) {
 
   	if (key === '') {
   		toastr.warning('<strong>Pattern Code</strong> is required')
-	  } else {
+
+	  } else if(key === 'default') {
+		  d.pattern = d.defpattern
+		  d.samples = d.defsamples;
+
+		  $scope.loadAllSample();
+
+	  }	else {
 		  db.ref("patterns/" + key).on("value", snapshot => {
 			  if (snapshot.exists()) {
+
 
 			  	if (playing) {
 					  // Stop Playing
@@ -757,11 +780,47 @@ app.controller("DmController", function($scope, $compile) {
 				  }
 				  // Data read successfully!
 				  let data = snapshot.val();
+
 				  d.pattern = JSON.parse(data.pattern);
-				  d.defSamples = JSON.parse(data.samples);
+				  // Why this code is here?
+				  // If try to load a pattern through url angular will not $apply changes
+				  // this is best/worst solution I've found
+				  if(!$scope.$$phase) {
+					  $scope.$apply()
+				  }
+
+				  d.samples = JSON.parse(data.samples);
 				  d.tempo = data.tempo;
 
+				  // Blur loading tracks
+					d.pattern.forEach(function (val, inst) {
+						if (document.getElementById("inst-" + inst) !== null) {
+							let steps = document.getElementById("inst-" + inst)
+								.querySelectorAll(".button-step");
+
+							// Blur instruments on loading
+							let filterVal = 'blur(5px)';
+							let set = document.getElementById("set-" + inst);
+
+							// Add loading icon
+							set.querySelector(".fa-2x").style.zIndex = '1';
+
+							set.querySelectorAll('p').forEach(function (value) {
+								value.style.filter = filterVal;
+								value.style.webkitFilter = filterVal;
+								value.style.pointerEvents = 'none'
+							});
+
+							steps.forEach(function (value) {
+								value.style.filter = filterVal;
+								value.style.webkitFilter = filterVal;
+								value.style.pointerEvents = 'none'
+							});
+						}
+					});
+
 				  $scope.loadAllSample();
+
 			  } else {
 				  // The read failed...
 			  }
@@ -781,7 +840,7 @@ app.controller("DmController", function($scope, $compile) {
 
   $scope.clear = function(inst) {
 	  d.pattern[inst].steps.forEach(function(value, index, array) { array[index] = 0; });
-	  $scope.forkUpUi(inst);
+	  $scope.updateStepsRoot(inst);
   };
 
   /**  MIX functions
@@ -789,11 +848,23 @@ app.controller("DmController", function($scope, $compile) {
    *
    *
    * **/
+  $scope.existAudio = function() {
+  	let out = true;
+	  d.pattern.every(function(value) {
+		  if (value.inst.audio === null) {
+		  	out = false;
+			  return false;
+		  }
+		  return true;
+	  });
+	  return out;
+  };
 
   $scope.checkMix = function() {
     d.pattern.forEach(function(value) {
-      if (value.inst.audio != null && !value.mute)
-        value.inst.audio.volume = value.inst.vol / MAXVOLUME;
+      if (value.inst.audio != null && !value.mute) {
+	      value.inst.audio.volume = value.inst.vol / MAXVOLUME;
+      }
     });
   };
 
@@ -826,37 +897,42 @@ app.controller("DmController", function($scope, $compile) {
   };
 
   $scope.startLoop = function() {
-    playing = !playing;
+    if ($scope.existAudio()) {
+	    playing = !playing;
 
-    if (!playing) {
-      // STOP
+	    if (!playing) {
+		    // STOP
 
-      // reset indexClock
-      idxClk = 1;
-      // reset instrument clock
-      $scope.resetClock();
-      // clear loop timeout
-      clearTimeout(toutPly);
-      // clean graphics change
-	    document.querySelectorAll('.button-step').forEach(function (value) {
-		    value.classList.remove('clock');
-	    })
-      // change status text
-      d.plyTxt = "PLAY";
+		    // reset indexClock
+		    idxClk = 1;
+		    // reset instrument clock
+		    $scope.resetClock();
+		    // clear loop timeout
+		    clearTimeout(toutPly);
+		    // clean graphics change
+		    document.querySelectorAll('.button-step').forEach(function (value) {
+			    value.classList.remove('clock');
+		    })
+		    // change status text
+		    d.plyTxt = "PLAY";
 
-      $scope.forkUpUi();
+		    $scope.updateStepsRoot();
 
+	    } else {
+		    // PLAY
+
+		    // check instruments volume
+		    $scope.checkMix();
+		    // play loop
+		    $scope.play();
+		    // change status text
+		    d.plyTxt = "STOP";
+	    }
     } else {
-      // PLAY
+	    toastr.warning('Samples are loading', 'Loading')
 
-      // check instruments volume
-      $scope.checkMix();
-      // play loop
-      $scope.play();
-      // change status text
-      d.plyTxt = "STOP";
     }
-  };
+   };
 
   $scope.play = function() {
     // playing sounds
@@ -899,7 +975,7 @@ app.controller("DmController", function($scope, $compile) {
 
     if ((tcycle === 1) && (element.cycle !== 0) && (view !== beat)) {
     	// Update UI
-	    $scope.forkUpUi(inst);
+	    $scope.updateStepsRoot(inst);
     }
 
     // select clock step on instrument line steps
@@ -948,7 +1024,7 @@ app.controller("DmController", function($scope, $compile) {
 				  steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			  };
 
-			  d.defSamples.push(d.sampleOn);
+			  d.samples.push(d.sampleOn);
 
 			  $scope.loadSample(d.sampleOn, d.pattern.length - 1);
 
@@ -969,7 +1045,7 @@ app.controller("DmController", function($scope, $compile) {
     }
   };
 
-  $scope.forkUpUi = function (inst) {
+  $scope.updateStepsRoot = function (inst) {
 	  d.pattern.every(function(pattern, index) {
       if (typeof inst !== 'undefined') {
         if (index === inst)  {
@@ -990,10 +1066,13 @@ app.controller("DmController", function($scope, $compile) {
 
 			// Blur instruments on loading
 			if (pattern.inst.audio === null) {
-
 				let filterVal = 'blur(5px)';
+				let set = document.getElementById("set-" + inst);
 
-				document.getElementById("set-" + inst).querySelectorAll('p').forEach(function (value) {
+				// Add loading icon
+				set.querySelector(".fa-2x").style.zIndex = '1';
+
+				set.querySelectorAll('p').forEach(function (value) {
 					value.style.filter = filterVal;
 					value.style.webkitFilter = filterVal;
 					value.style.pointerEvents = 'none'
@@ -1047,7 +1126,7 @@ app.controller("DmController", function($scope, $compile) {
   $scope.$on('onRepeatLast', function(scope, element, attrs) {
     // Do some stuffs here
 	  let inst = parseInt(element[0].parentElement.parentElement.getAttribute('id').substr(5));
-    $scope.forkUpUi(inst)
+    $scope.updateStepsRoot(inst)
   });
 });
 

@@ -11,7 +11,7 @@
     <script src="js/lib/angular.min.js"></script>
     <script src="js/lib/toastr.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
-    <script src="js/component.js"></script>
+    <script src="js/component.js?v=3"></script>
     <script>if (window.module) module = window.module;</script>
     <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
@@ -38,7 +38,7 @@
     </div>
 </div>
 <div id="surface">
-    <div id="edit-area">
+    <div id="edit-area" class="slide-left" style="display: none;">
         <p class="title">
             <strong>{{d.pattern[d.trkOn].inst.text}}</strong>
             <i data-ng-click="closeEditArea()" class="fas fa-times-circle"></i>
@@ -115,6 +115,7 @@
                          ng-init="labelIndex = $index"
                          id="set-{{labelIndex}}"
                          class="box-label">
+                        <div class="fa-2x"><i class="fas fa-spinner fa-spin"></i></div>
                         <p class="grid-area-a name">{{label.inst.text}}</p>
                         <p class="grid-area-c mute" ng-click="mute(labelIndex)"><i class="fas fa-volume-up"></i></p>
                         <p class="grid-area-d clear" ng-click="clear(labelIndex)"><i class="fas fa-broom"></i></p>

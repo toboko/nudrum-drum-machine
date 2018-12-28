@@ -556,4 +556,15 @@ div#simple-set > div {
 .beat-16 > .button-step {width: 22px;}
 .beat-32 > .button-step {width: 7px;}
 .beat-32 > .button-step span {
-    display: none;}
+    display: none;
+}
+
+.fa-2x {
+    position: absolute;
+    z-index: 0;
+    left: 0;
+    right: 0;
+    top: 50%;
+    text-align: center;
+    opacity: 0.8;
+}
