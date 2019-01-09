@@ -10,7 +10,7 @@ forces of natural selection to induce battle trance, promote the development of 
 ### What is polyrhythm?
 A polyrhythm is the simultaneous use of two or more conflicting rhythms, that are not readily perceived as deriving from one another, or as simple manifestations of the same meter. It can be distinguished from irrational rhythms (tuplets), which can occur within the context of a single part
 
-Click on the link to watch a [simple polyrhythm pattern](https://nudrum.netlify.com/?p=PZodt) on NuDrum
+Click on the link to watch a [simple polyrhythm pattern](https://nudrum.netlify.com/?p=vR3O8) on NuDrum
 
 ### What is polymetric?
 Rhythm in music is characterized by a repeating sequence of stressed and unstressed beats (strong vs. weak; upbeat vs. downbeat) and divided into bars organized by time signature and tempo indications. In music, time signature always occurs at start of a paper sheet, it represents the rhythm of the piece.
@@ -22,14 +22,16 @@ Rhythm in music is characterized by a repeating sequence of stressed and unstres
 With NuDrum we can set different time signature (even or odd) and find new amazing pattern.
 
 On the right of every instrument we can:
+
+![NuDrum logo](/img/actio-menu.PNG) 
  1. Mute the track
  2. Clear the row
  3. Open the edit menu
 
-![NuDrum logo](/img/actio-menu.PNG) 
 
 The edit menu will slide from the left to the right, standing on the left margin of the screen. Here, we can choose from different options. 
 In the first row (from the left to the right) we can:
+![NuDrum logo](/img/edit-menu.PNG) 
 1. **volume** - Change the volume
 2. **offset** - Change the offset
 3. **beat** - Change the notes duration
@@ -38,7 +40,6 @@ In the second row:
 1. **shift** - Shift right (up arrow) or shift left (down arrow) the pattern.
 2. **delete** - Delete the track
 
-![NuDrum logo](/img/edit-menu.PNG) 
 
 ### How they works
 
@@ -50,8 +51,8 @@ In a track with a beat duration of **8** we can have **16** possible offset and 
 
 
 Examples: <br>
-[Time in 5/4](https://nudrum.netlify.com/?p=LIGXP) - If we set beat to **4** (all notes duration are 1/4) and offset to **5** we have obtained a 5/4 time signature. <br>
-[Time in 7/8](https://nudrum.netlify.com/?p=I97li) - If we set beat to **8** (all notes duration are 1/8) and offset to **7** we have obtained a 7/8 time signature. 
+[Time in 5/4](https://nudrum.netlify.com/?p=hz6ZR) - If we set beat to **4** (all notes duration are 1/4) and offset to **5** we have obtained a 5/4 time signature. <br>
+[Time in 7/8](https://nudrum.netlify.com/?p=E8R6i) - If we set beat to **8** (all notes duration are 1/8) and offset to **7** we have obtained a 7/8 time signature. 
 
 **Tips** - *Minimum offset is 4*
 
