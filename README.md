@@ -24,6 +24,7 @@ With NuDrum we can set different time signature (even or odd) and find new amazi
 On the right of every instrument we can:
 
 ![NuDrum logo](/img/actio-menu.PNG) 
+
  1. Mute the track
  2. Clear the row
  3. Open the edit menu
@@ -31,7 +32,9 @@ On the right of every instrument we can:
 
 The edit menu will slide from the left to the right, standing on the left margin of the screen. Here, we can choose from different options. 
 In the first row (from the left to the right) we can:
+
 ![NuDrum logo](/img/edit-menu.PNG) 
+
 1. **volume** - Change the volume
 2. **offset** - Change the offset
 3. **beat** - Change the notes duration
@@ -39,7 +42,6 @@ In the first row (from the left to the right) we can:
 In the second row:
 1. **shift** - Shift right (up arrow) or shift left (down arrow) the pattern.
 2. **delete** - Delete the track
-
 
 ### How they works
 
