@@ -98,8 +98,9 @@ You can build your own standalone floating app thanks to [Electron](https://elec
     npm start
 
 ## Dependencies
-[Toastr](https://github.com/CodeSeven/toastr) - Simple javascript toast notification <br>
+[AngularJS](https://github.com/angular/angular.js) - AngularJS is a JavaScript-based open-source front-end web application framework <br>
 [Pizzicato.js](https://github.com/alemangui/pizzicato) - Library to simplify the way you create and manipulate sounds with the Web Audio API <br>
+[Toastr](https://github.com/CodeSeven/toastr) - Simple javascript toast notification <br>
 [jQuery](https://github.com/jquery/jquery) - jQuery JavaScript Library 
 
 ## Copyright
@@ -111,3 +112,4 @@ Copyright © 2018-2019 All the rights reserved to Nicola Bombaci
 
 NuDrum is under Academic Free License 3.0
 [(AFL)](https://tldrlegal.com/license/academic-free-license-3.0-\(afl\))
+
