@@ -3,6 +3,8 @@ The project aims to create a polirhythmic and polymetric drum machine, through a
 
 **[Try NuDrum](https://nudrum.netlify.com/)**
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a255ab17-7f57-48bd-864e-39b06d954642/deploy-status)](https://app.netlify.com/sites/nudrum/deploys)
+
 ### What is rhythm?
 The sense of rhythm was developed in the early stages of hominid evolution by the
 forces of natural selection to induce battle trance, promote the development of a defense system of early hominids. In Sub-Saharan Africa it evolved in complex forms such as multi-layered polyrhythm and simultaneous rhythms in more than one time signature. 
