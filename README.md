@@ -14,12 +14,12 @@ A polyrhythm is the simultaneous use of two or more conflicting rhythms, that ar
 
 Click on the link to watch a [simple polyrhythm pattern](https://nudrum.netlify.com/?p=vR3O8) on NuDrum
 
-### What is polymetric?
+### What is polymeter?
 Rhythm in music is characterized by a repeating sequence of stressed and unstressed beats (strong vs. weak; upbeat vs. downbeat) and divided into bars organized by time signature and tempo indications. In music, time signature always occurs at start of a paper sheet, it represents the rhythm of the piece.
 
  **Tips** - *Usually, modern drum machine can be set on a single time signature forcing performer to play all the rhythm in a strict way.*
 
-## How to music?
+## How to make music
 
 With NuDrum we can set different time signature (even or odd) and find new amazing pattern.
 
@@ -45,7 +45,7 @@ In the second row:
 1. **shift** - Shift right (up arrow) or shift left (down arrow) the pattern.
 2. **delete** - Delete the track
 
-### How they works
+### How does beat works
 
 Beat goes from: **4** to **8** to **16** to **32**. The beat represents notes duration [**4**] = 1/4 , [**8**] = 1/8 and so on. Default time signature is **4/4** but changing the offset it possible to turn the time. 
 
@@ -61,7 +61,7 @@ Examples: <br>
 **Tips** - *Minimum offset is 4*
 
 
-## How to pattern?
+## How to create patterns
 Standing on the right margin of the screen we can found the pattern menu. Here we can **Save** our own pattern, setting a proper name or **Load** a previous one knowing its unique code. Unique code is recognizable in the brackets **[ ]**, it's followed by the timestamp and the title. 
 
 Every pattern can be easily reached typing NuDrum url, followed by **?p=OurCodeHere** <br>
@@ -71,7 +71,7 @@ Example - https://nudrum.netlify.com/?p=63640
 
 ![NuDrum logo](/img/pattern-menu.PNG) 
 
-## How to upload?
+## How to upload
 The last row track is dedicated to create new instruments. We must choose a name for the instrument, then the sound from the **Sound Library**, the start beat and the offset. Once finished, click on the plus button and try our new sample.
 
 ![NuDrum logo](/img/newinst-menu.PNG) 
@@ -80,19 +80,20 @@ We can choose from many sounds or upload ours. Clicking on **Sound Library** wil
 
 ![NuDrum logo](/img/upload-menu.PNG) 
 
-### Write rules
+### Storage's rules
 
-Allow write files to the path:
+All file are downloaded and uploaded on Firebase Storage. Any operation must be follow some rules to read and write; in particular files are allow to be written into the following paths:
 
     /Clap , /Crash , /HitHat , /Kick , /Ride , /Rim , /Snare , /Tom, /Loop
-subject to the constraints:
+
+Every file is subject to the following constraints:
     
     1. File is less than 5MB
     2. Content type is an audio
     3. Uploaded content type matches audio/.* content type
     4. File name is less than 32 characters
     
-## Standalone
+## Standalone application
 You can build your own standalone floating app thanks to [Electron](https://electronjs.org/)<br>
     
     git clone https://github.com/toboko/NuDrum
