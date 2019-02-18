@@ -796,6 +796,7 @@ app.controller("DmController", function($scope, $compile) {
 					});
 
 				  $scope.loadAllSample();
+				  $scope.updateBeat();
 
 			  } else {
 				  // The read failed...
