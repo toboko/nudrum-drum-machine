@@ -1,7 +1,7 @@
 # NuDrum
 The project aims to create a polirhythmic and polymetric drum machine, through a responsive web interface. These features are limiting to all the instruments available on a drum machine (physical or digital). NuDrum unlike the previous ones, makes every single instrument polyrhythm and polymetric, in order to improve the visual learning of the various rhythmic patterns created by the users using the platform. In addition, it will be available through Google's Firebase services, to upload your own samples to the platform and share rhythmic patterns with the audience.
 
-**[Try NuDrum](https://nudrum.netlify.com/)**
+**[Let's Play NuDrum](https://nudrum.netlify.com/)**
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a255ab17-7f57-48bd-864e-39b06d954642/deploy-status)](https://app.netlify.com/sites/nudrum/deploys)
 
@@ -10,9 +10,18 @@ The sense of rhythm was developed in the early stages of hominid evolution by th
 forces of natural selection to induce battle trance, promote the development of a defense system of early hominids. In Sub-Saharan Africa it evolved in complex forms such as multi-layered polyrhythm and simultaneous rhythms in more than one time signature. 
 
 ### What is polyrhythm?
-A polyrhythm is the simultaneous use of two or more conflicting rhythms, that are not readily perceived as deriving from one another, or as simple manifestations of the same meter. It can be distinguished from irrational rhythms (tuplets), which can occur within the context of a single part
+A polyrhythm is the simultaneous use of two or
+more conflicting rhythms, that are not readily
+perceived as deriving from one another, or as
+simple manifestations of the same meter
+- Polyrhythms can be distinguished from irrational
+rhythms (tuplets), which can occur within the context
+of a single part
+- Polyrhythms require at least two rhythms to be played
+concurrently, one of which is typically an irrational
+rhythm
 
-Click on the link to watch a [simple polyrhythm pattern](https://nudrum.netlify.com/?p=vR3O8) on NuDrum
+Click on the link to watch a [simple polyrhythm pattern](https://nudrum.netlify.com/?p=N5sj6) on NuDrum
 
 ### What is polymeter?
 Rhythm in music is characterized by a repeating sequence of stressed and unstressed beats (strong vs. weak; upbeat vs. downbeat) and divided into bars organized by time signature and tempo indications. In music, time signature always occurs at start of a paper sheet, it represents the rhythm of the piece.
@@ -47,32 +56,32 @@ In the second row:
 
 ### How does beat works
 
-Beat goes from: **4** to **8** to **16** to **32**. The beat represents notes duration [**4**] = 1/4 , [**8**] = 1/8 and so on. Default time signature is **4/4** but changing the offset it possible to turn the time. 
-
-
-In a track with a beat duration of **4** we can have **8** possible offset.<br>
-In a track with a beat duration of **8** we can have **16** possible offset and so on..
-
+Beat goes from: **1** to **8**. The beat represents notes duration based on the rhythmical context [**1**] = 1/64 , [**2**] = 1/32 and so on. Default time signature is **4/4** but changing the beat it possible to turn the time and create a cross-rhythm. 
 
 Examples: <br>
-[Time in 5/4](https://nudrum.netlify.com/?p=hz6ZR) - If we set beat to **4** (all notes duration are 1/4) and offset to **5** we have obtained a 5/4 time signature. <br>
-[Time in 7/8](https://nudrum.netlify.com/?p=E8R6i) - If we set beat to **8** (all notes duration are 1/8) and offset to **7** we have obtained a 7/8 time signature. 
+[Cross-Rhythm 7:4 | Signature 7/8](https://nudrum.netlify.com/?p=X5q29) (Sound of Muzak)
 
-**Tips** - *Minimum offset is 4*
+If we set the Kick to **7** and Ride to **4** we have obtained a 7/8 time signature and a 7:4 Cross-Rhythm. <br>
+
+[Cross-Rhythm 7:2 | Signature 7/8](https://nudrum.netlify.com/?p=S8c0l) (Porcupine Tree - Dark Matter)
+
+If we set the Kick to **7** and Ride to **2** we have obtained a 7/8 time signature and a 7:2 Cross-Rhythm
+
+**Tips** - *Minimum offset is 3*
 
 
 ## How to create patterns
 Standing on the right margin of the screen we can found the pattern menu. Here we can **Save** our own pattern, setting a proper name or **Load** a previous one knowing its unique code. Unique code is recognizable in the brackets **[ ]**, it's followed by the timestamp and the title. 
 
 Every pattern can be easily reached typing NuDrum url, followed by **?p=OurCodeHere** <br>
-Example - https://nudrum.netlify.com/?p=63640
+Example - https://nudrum.netlify.com/?p=X5q29
 
 **Please**... **Please**... **Please**... Use the right name for your patterns to help everyone to understand and learn from your rhythmic structures. Keep in mind that NuDrum is an educational tool for everyone
 
 ![NuDrum logo](/img/pattern-menu.PNG) 
 
 ## How to upload
-The last row track is dedicated to create new instruments. We must choose a name for the instrument, then the sound from the **Sound Library**, the start beat and the offset. Once finished, click on the plus button and try our new sample.
+The last row track is dedicated to create new instruments. We must choose a name for the instrument, then the sound from the **Sound Library**. Once finished, click on the plus button and try our new sample.
 
 ![NuDrum logo](/img/newinst-menu.PNG) 
 
@@ -103,6 +112,7 @@ You can build your own standalone floating app thanks to [Electron](https://elec
 ## Dependencies
 [AngularJS](https://github.com/angular/angular.js) - AngularJS is a JavaScript-based open-source front-end web application framework <br>
 [Pizzicato.js](https://github.com/alemangui/pizzicato) - Library to simplify the way you create and manipulate sounds with the Web Audio API <br>
+[Math.js](https://github.com/josdejong/mathjs) - Math.js is an extensive math library for JavaScript <br>
 [Toastr](https://github.com/CodeSeven/toastr) - Simple javascript toast notification <br>
 [jQuery](https://github.com/jquery/jquery) - jQuery JavaScript Library 
 
