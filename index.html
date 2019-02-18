@@ -10,7 +10,9 @@
     <script src="js/lib/pizzicato.min.js"></script>
     <script src="js/lib/angular.min.js"></script>
     <script src="js/lib/toastr.min.js"></script>
+    <script src="js/lib/math.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+    <script src="js/functions.js"></script>
     <script src="js/component.js?v=3"></script>
     <script>if (window.module) module = window.module;</script>
     <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
@@ -59,7 +61,7 @@
             <div class="beat grid-area-c">
                 <p class="title">beat</p>
                 <i class="fas fa-caret-up" data-ng-click="setBeat(true, d.trkOn)"></i>
-                <p class="value">{{d.pattern[d.trkOn].beat.id}}</p>
+                <p class="value">{{d.pattern[d.trkOn].beat.id}}|{{d.maxoffset}}</p>
                 <i class="fas fa-caret-down" data-ng-click="setBeat(false, d.trkOn)"></i>
             </div>
         </div>
@@ -116,7 +118,7 @@
                          id="set-{{labelIndex}}"
                          class="box-label">
                         <div class="fa-2x"><i class="fas fa-spinner fa-spin"></i></div>
-                        <p class="grid-area-a name">{{label.inst.text}}</p>
+                        <p class="grid-area-a name">{{label.inst.text}}  <small>{{label.beat.id}}|{{d.maxoffset}}</small></p>
                         <p class="grid-area-c mute" ng-click="mute(labelIndex)"><i class="fas fa-volume-up"></i></p>
                         <p class="grid-area-d clear" ng-click="clear(labelIndex)"><i class="fas fa-broom"></i></p>
                         <p class="grid-area-e edit" ng-click="select(labelIndex)"><i class="open-set"></i> Edit</p>
@@ -128,7 +130,7 @@
                 <div id="inst-{{$index}}" class="line-inst line-inst-margin-top line-inst-padding"
                      data-ng-repeat="inst in d.pattern track by $index"
                      ng-init="instIndex = $index">
-                    <div class="line-steps line-steps-height beat-{{inst.beat.id}}">
+                    <div class="line-steps line-steps-height beat-{{inst.beat.offset}}">
 
                         <div  data-ng-repeat="step in inst.steps track by $index"
                               ng-init="stepIndex = $index"
@@ -149,21 +151,8 @@
                             <strong class="click" data-ng-click="openNavigateArea()">Sound Library <i class="fas fa-folder-open"></i></strong><br>
                             <small>{{d.sampleOn}}</small>
                         </div>
-                        <div  id="inst-new-beat" class="inst-new-par step-height">
-                            <strong>Beat</strong>
-                            <i class="fas fa-caret-left" data-ng-click="setBeat(false)"></i>
-                            <span class="value">{{d.newpattern.beat.id}}</span>
-                            <i class="fas fa-caret-right" data-ng-click="setBeat(true)"></i>
-                        </div>
-                        <div  id="inst-new-offset" class="inst-new-par step-height">
-                            <strong>Offset</strong>
-                            <i class="fas fa-caret-left" data-ng-click="setOffset(false)"></i>
-                            <span class="value">{{d.newpattern.view}}</span>
-                            <i class="fas fa-caret-right" data-ng-click="setOffset(true)"></i>
-                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

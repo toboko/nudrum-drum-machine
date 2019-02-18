@@ -144,11 +144,6 @@ input, select {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
-    /*-webkit-transition: 250ms width;*/
-    /*-moz-transition: 250ms width;*/
-    /*-ms-transition: 250ms width;*/
-    /*-o-transition: 250ms width;*/
-    /*transition: 250ms width;*/
 }
 
 .button-step.select.clock {
@@ -159,9 +154,6 @@ input, select {
 }
 .button-step.select {
   background: #3DF4C9;
-}
-.button-step.select span {
-  color: #ffffff;
 }
 .button-step.disabled {
   cursor: not-allowed;
@@ -411,8 +403,23 @@ input, select {
 }
 .number {
     display: block;
-    text-align: center;
+    font-size: small;
+    width: 13px;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
 }
+/*.number:after {*/
+    /*content: '';*/
+    /*display: block;*/
+    /*position: absolute;*/
+    /*background: #9af4d9;*/
+    /*z-index: -1;*/
+    /*width: 18px;*/
+    /*height: 20px;*/
+    /*border-radius: 4px 0 0;*/
+    /*left: -2px;*/
+    /*top: -2px;*/
+/*}*/
 .line-insts {
     margin-bottom: 80px;
     margin-top: 25px;
@@ -551,13 +558,79 @@ div#simple-set > div {
     float: left;
 }
 
-.beat-4 > .button-step {width: 112px;}
-.beat-8 > .button-step {width: 52px;}
-.beat-16 > .button-step {width: 22px;}
-.beat-32 > .button-step {width: 7px;}
-.beat-32 > .button-step span {
-    display: none;
-}
+/*.beat-8 > .button-step {width: 112px;}*/
+/*.beat-7 > .button-step {width: 97px;}*/
+/*.beat-6 > .button-step {width: 82px;}*/
+/*.beat-5 > .button-step {width: 67px;}*/
+/*.beat-4 > .button-step {width: 52px;}*/
+/*.beat-3 > .button-step {width: 37px;}*/
+/*.beat-2 > .button-step {width: 22px;}*/
+/*.beat-1 > .button-step {width: 7px;}*/
+
+.beat-1 > .button-step { width: calc((100% / 1) - 8px)}
+.beat-2 > .button-step { width: calc((100% / 2) - 8px)}
+.beat-3 > .button-step { width: calc((100% / 3) - 8px)}
+.beat-4 > .button-step { width: calc((100% / 4) - 8px)}
+.beat-5 > .button-step { width: calc((100% / 5) - 8px)}
+.beat-6 > .button-step { width: calc((100% / 6) - 8px)}
+.beat-7 > .button-step { width: calc((100% / 7) - 8px)}
+.beat-8 > .button-step { width: calc((100% / 8) - 8px)}
+.beat-9 > .button-step { width: calc((100% / 9) - 8px)}
+.beat-10 > .button-step { width: calc((100% / 10) - 8px)}
+.beat-11 > .button-step { width: calc((100% / 11) - 8px)}
+.beat-12 > .button-step { width: calc((100% / 12) - 8px)}
+.beat-13 > .button-step { width: calc((100% / 13) - 8px)}
+.beat-14 > .button-step { width: calc((100% / 14) - 8px)}
+.beat-15 > .button-step { width: calc((100% / 15) - 8px)}
+.beat-16 > .button-step { width: calc((100% / 16) - 8px)}
+.beat-17 > .button-step { width: calc((100% / 17) - 8px)}
+.beat-18 > .button-step { width: calc((100% / 18) - 8px)}
+.beat-19 > .button-step { width: calc((100% / 19) - 8px)}
+.beat-20 > .button-step { width: calc((100% / 20) - 8px)}
+.beat-21 > .button-step { width: calc((100% / 21) - 8px)}
+.beat-22 > .button-step { width: calc((100% / 22) - 8px)}
+.beat-23 > .button-step { width: calc((100% / 23) - 8px)}
+.beat-24 > .button-step { width: calc((100% / 24) - 8px)}
+.beat-25 > .button-step { width: calc((100% / 25) - 8px)}
+.beat-26 > .button-step { width: calc((100% / 26) - 8px)}
+.beat-27 > .button-step { width: calc((100% / 27) - 8px)}
+.beat-28 > .button-step { width: calc((100% / 28) - 8px)}
+.beat-29 > .button-step { width: calc((100% / 29) - 8px)}
+.beat-30 > .button-step { width: calc((100% / 30) - 8px)}
+.beat-31 > .button-step { width: calc((100% / 31) - 8px)}
+.beat-32 > .button-step { width: calc((100% / 32) - 8px)}
+.beat-33 > .button-step { width: calc((100% / 33) - 8px)}
+.beat-34 > .button-step { width: calc((100% / 34) - 8px)}
+.beat-35 > .button-step { width: calc((100% / 35) - 8px)}
+.beat-36 > .button-step { width: calc((100% / 36) - 8px)}
+.beat-37 > .button-step { width: calc((100% / 37) - 8px)}
+.beat-38 > .button-step { width: calc((100% / 38) - 8px)}
+.beat-39 > .button-step { width: calc((100% / 39) - 8px)}
+.beat-40 > .button-step { width: calc((100% / 40) - 8px)}
+.beat-41 > .button-step { width: calc((100% / 41) - 8px)}
+.beat-42 > .button-step { width: calc((100% / 42) - 8px)}
+.beat-43 > .button-step { width: calc((100% / 43) - 8px)}
+.beat-44 > .button-step { width: calc((100% / 44) - 8px)}
+.beat-45 > .button-step { width: calc((100% / 45) - 8px)}
+.beat-46 > .button-step { width: calc((100% / 46) - 8px)}
+.beat-47 > .button-step { width: calc((100% / 47) - 8px)}
+.beat-48 > .button-step { width: calc((100% / 48) - 8px)}
+.beat-49 > .button-step { width: calc((100% / 49) - 8px)}
+.beat-50 > .button-step { width: calc((100% / 50) - 8px)}
+.beat-51 > .button-step { width: calc((100% / 51) - 8px)}
+.beat-52 > .button-step { width: calc((100% / 52) - 8px)}
+.beat-53 > .button-step { width: calc((100% / 53) - 8px)}
+.beat-54 > .button-step { width: calc((100% / 54) - 8px)}
+.beat-55 > .button-step { width: calc((100% / 55) - 8px)}
+.beat-56 > .button-step { width: calc((100% / 56) - 8px)}
+.beat-57 > .button-step { width: calc((100% / 57) - 8px)}
+.beat-58 > .button-step { width: calc((100% / 58) - 8px)}
+.beat-59 > .button-step { width: calc((100% / 59) - 8px)}
+.beat-60 > .button-step { width: calc((100% / 60) - 8px)}
+.beat-61 > .button-step { width: calc((100% / 61) - 8px)}
+.beat-62 > .button-step { width: calc((100% / 62) - 8px)}
+.beat-63 > .button-step { width: calc((100% / 63) - 8px)}
+.beat-64 > .button-step { width: calc((100% / 64) - 8px)}
 
 .fa-2x {
     position: absolute;

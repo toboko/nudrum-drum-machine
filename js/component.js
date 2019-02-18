@@ -1,70 +1,6 @@
 toastr.options.progressBar = true;
 toastr.options.closeButton = true;
 
-const randomCharacter = function() {
-  let possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-  return possible[Math.floor(Math.random() * possible.length)];
-};
-
-const randomBool = function() {
-  let possible = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0];
-  return possible[Math.floor(Math.random() * possible.length)] === 1;
-};
-
-const short = function() {
-	let out = [],
-		str,
-		min = 5;
-
-	for (let i = 0; i < min; i++) {
-		str = randomCharacter();
-		str = randomBool() ? str.toUpperCase() : str;
-		out.push(str);
-	}
-	return out.join("");
-};
-
-const normal = function (i, l, a = true) {
-	i = i % l;
-	return (i === 0 && a) ? l : i;
-};
-
-const rshft = function(arr, places) {
-  for (let i = 0; i < places; i++) {
-    arr.unshift(arr.pop());
-  }
-};
-
-const lshft = function(arr, places) {
-  for (let i = 0; i < places; i++) {
-    arr.push(arr.shift());
-  }
-};
-
-const findGetParameter = function(parameterName) {
-  let result = null,
-    tmp = [];
-  let items = window.location.search.substr(1).split("&");
-  for (let index = 0; index < items.length; index++) {
-    tmp = items[index].split("=");
-    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-  }
-  return result;
-};
-
-Date.dateDiff = function(datepart, diff) {
-  datepart = datepart.toLowerCase();
-  let divideBy = {
-    w: 604800000,
-    d: 86400000,
-    h: 3600000,
-    m: 60000,
-    s: 1000
-  };
-
-  return Math.floor(diff / divideBy[datepart]);
-};
-
 const app = angular.module("drummachineApp", []);
 /*  BUG
 
@@ -170,20 +106,20 @@ app.controller("DmController", function($scope, $compile) {
 	d.sampleOn = '';
   d.tempo  = DEFAULTTEMPO;
   d.plyTxt = "PLAY";
+	d.maxoffset = 64; // def maxoffset can be modified
 
-  d.beat = {
-    4:  { id: 4,  offset:8,  text: "1/4",  rate: 8, ms: 60000 },
-    8:  { id: 8,  offset:16, text: "1/8",  rate: 4, ms: 30000 },
-    16: { id: 16, offset:32, text: "1/16", rate: 2, ms: 15000 },
-    32: { id: 32, offset:64, text: "1/32", rate: 1, ms: 7500 }
+	d.beat = {
+    8:  { id: 8, offset:8,  ms: 60000 },
+	  7:  { id: 7, offset:8,  ms: 52500 },
+	  5:  { id: 5, offset:5,  ms: 37500 },
+    4:  { id: 4, offset:16, ms: 30000 },
+	  3:  { id: 3, offset:3,  ms: 22500 },
+    2:  { id: 2, offset:32, ms: 15000 },
+    1:  { id: 1, offset:64, ms: 7500  }
   };
 
 	d.samples = Array();
   d.pattern = Array();
-
-	d.newpattern = {
-	  inst: { text: '', mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-	};
 
 	d.defsamples = Array(
 		"Kick/Classic.wav",
@@ -195,12 +131,12 @@ app.controller("DmController", function($scope, $compile) {
 	);
 
 	d.defpattern = Array(
-		{ inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-		{ inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-		{ inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-		{ inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-		{ inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-		{ inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[8], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+		{ inst: { text: "Bass Drum", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Snare Drum", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Mid Tom", mute: false, vol: 5,  audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Rim Shot", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Closed Hihat", mute: false, vol: 5, audio: null }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+		{ inst: { text: "Crash Cymbal", mute: false, vol: 5, audio: null  }, clock: 1, view: 16, shift: 0, cycle: 0, beat: d.beat[4], steps: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
 	);
 
 	$scope.$watch('$viewContentLoaded', function(){
@@ -492,57 +428,101 @@ app.controller("DmController", function($scope, $compile) {
   	if (playing) {
 		  toastr.warning('Beat cannot be set while playing', 'Beat Rules')
 	  } else {
-		  let oldbeat = (typeof inst !== 'undefined') ? d.pattern[inst].beat.id : d.newpattern.beat.id;
-		  let newbeat = oldbeat;
+		  let newbeat = d.pattern[inst].beat.id;
+		  let basebeat = null;
+		  let basebeat_occurs = 0;
 		  // Controls on new beat
-		  newbeat = inc ? newbeat * 2 : newbeat / 2;
-		  newbeat = newbeat === 2 ? 32 : newbeat;
-		  newbeat = newbeat === 64 ? 4 : newbeat;
+		  newbeat = inc ? newbeat += 1 : newbeat -= 1;
+		  newbeat = newbeat === 0 ? 8 : newbeat; // round inc
+		  newbeat = newbeat === 9 ? 1 : newbeat; // round inc
+		  if (newbeat === 6) newbeat = inc ? newbeat+=1 : newbeat-=1; // skip number 6
 
-		  // Add or reduce steps
-		  let newoffset = d.beat[newbeat].offset;
-		  // Create temp array replacing the old one
-		  let tempsteps = Array(newoffset).fill(0);
-
-		  if (typeof inst !== 'undefined') {
-			  // Shift active steps
-			  d.pattern[inst].steps.forEach(function (val, index, array) {
-				  let i2, distance = 0;
-
-				  if (newbeat > oldbeat) {
-					  // If we are increasing the beat speed
-					  distance = (newbeat / oldbeat);
-					  i2 = index * distance;
-					  tempsteps[i2] = (array[index] === 1) ? 1 : 0;
-
-				  } else {
-					  // If we are reducing the beat speed
-					  distance = (oldbeat / newbeat);
-					  i2 = (index % distance) ? (index - 1) / distance : index / distance;
-					  if (array[index] && tempsteps[i2] === 0) {
-						  tempsteps[i2] = 1;
-					  }
-				  }
-			  });
-				// New offset
-			  if (d.pattern[inst].view === d.pattern[inst].beat.offset || d.pattern[inst].view > d.beat[newbeat].offset) {
-				  d.pattern[inst].view = newoffset;
+		  // to prevent multi odd time if exists an instrument with an odd time
+		  // we save it on basetime to limit user to select only that or even time
+		  // this because grid has a limited size and multiple odd time like: 5,7,4
+		  // need a wide grid built by a 1/140 unit (lcm of 5,7,4)
+		  d.pattern.forEach(function (element) {
+			  if (element.beat.id !== 1 && element.beat.id % 2) {
+			  	basebeat = element.beat.id;
+				  basebeat_occurs += 1; // in order to skip single odd time
 			  }
-			  // New Beat
-			  d.pattern[inst].beat = d.beat[newbeat];
-			  // Update Matrix
-			  d.pattern[inst].steps = tempsteps;
+		  })
 
-		  } else {
-			  // New Beat
-			  d.newpattern.beat = d.beat[newbeat];
-			  // Update Matrix
-			  d.newpattern.steps = tempsteps;
-			  // New offset
-			  d.newpattern.view = newoffset;
+		  // if newbeat is odd check basebeat
+		  if (basebeat !== null && newbeat % 2) {
+		  	// if newbeat is different skip because only one odd time x times is admitted
+		  	if(newbeat!== 1 && basebeat_occurs > 1 && newbeat !== basebeat) {
+				  newbeat = inc ? newbeat+=1 : newbeat-=1;
+			  }
 		  }
+
+		  d.pattern[inst].beat = d.beat[newbeat];
+
+		  $scope.updateBeat();
+		  $scope.updateStepsRoot()
 	  }
   };
+
+	$scope.updateBeat = function() {
+		let lcm_beats = [];
+		let odd = false;
+		let lcm = 1;
+		let sol = 0;
+		let len = 0;
+
+		d.pattern.forEach(function (element) {
+			lcm_beats.push(element.beat.id);
+
+			if (lcm_beats.length === 2) {
+				lcm = math.lcm(lcm_beats[0], lcm_beats[1]);
+				lcm_beats = [];
+				lcm_beats.push(lcm);
+			}
+
+			// check if there is an odd time
+			if (element.beat.id % 2) {
+				if (element.beat.id !== 1) odd = true;
+			}
+		});
+
+		d.maxoffset = lcm;
+
+		// if an odd time
+		if (odd) {
+			// smallest tatum must be >= 1/13
+			while(d.maxoffset < 13) {
+				d.maxoffset += d.maxoffset;
+			}
+			// if an even time
+		} else {
+			// smallest tatum must be >= 1/64
+			while(d.maxoffset < 60) {
+				d.maxoffset += d.maxoffset;
+			}
+		}
+
+		// resize instruments grid
+		d.pattern.forEach(function (element, index) {
+			sol = d.maxoffset / element.beat.id;
+
+			element.beat.offset = sol;
+			element.view = sol;
+
+			if (element.steps.length !== sol) {
+				if (element.steps.length > sol) {
+					//reduce
+					element.steps = element.steps.splice(0, sol);
+
+				} else {
+					//increase
+					len = element.steps.length
+					element.steps.length = sol;
+					element.steps.fill(0, len);
+
+				}
+			}
+		});
+	};
 
   $scope.setOffset = function(inc, inst) {
   	let pattern = d.pattern[inst];
@@ -551,20 +531,15 @@ app.controller("DmController", function($scope, $compile) {
   		toastr.warning('Offset cannot be set while playing', 'Offset Rules')
 
 	  } else {
-		  let newoffset = (typeof inst !== 'undefined') ? pattern.view : d.newpattern.view;
-		  let maxoffset = (typeof inst !== 'undefined') ? pattern.beat.offset : d.newpattern.beat.offset;
+		  let newoffset = pattern.view;
+		  let maxoffset = pattern.beat.offset;
 
 		  newoffset = inc ? (newoffset += 1) : (newoffset -= 1);
-		  newoffset = newoffset < 5 ? 5 : newoffset;
+		  newoffset = newoffset < 3 ? 3 : newoffset;
 		  newoffset = newoffset > maxoffset ? maxoffset : newoffset;
 
-		  if (typeof inst === 'undefined') {
-			  d.newpattern.view = newoffset;
-
-		  } else {
-			  pattern.view = newoffset;
-			  $scope.updateStepsRoot(inst)
-		  }
+		  pattern.view = newoffset;
+		  $scope.updateStepsRoot(inst)
 	  }
   };
 
@@ -624,7 +599,8 @@ app.controller("DmController", function($scope, $compile) {
 		d.trkOn = 0;
 
 		if (d.pattern.length === 0) {
-		  $scope.closeEditArea()
+		  $scope.closeEditArea();
+		  d.maxoffset = 64;
     }
 
 		$scope.updateStepsRoot()
@@ -939,21 +915,21 @@ app.controller("DmController", function($scope, $compile) {
     d.pattern.forEach(function(value, inst) {
 
       // clock is in time with beat rate
-      if ( idxClk % value.beat.rate === 1) {
+      if ( idxClk % value.beat.id === 1) {
         $scope.playInst(inst, d.pattern[inst]);
 
-      } else if(value.beat.rate === 1) {
+      } else if(value.beat.id === 1) {
         $scope.playInst(inst, d.pattern[inst]);
       }
     });
 
     // inc global clock value
-    idxClk = normal((idxClk + 1), d.beat[32].offset);
+    idxClk = normal((idxClk + 1), d.maxoffset);
 
     // timeout loop
     toutPly = window.setTimeout(function() {
         $scope.play();
-      },(d.beat[32].ms ) / d.tempo);
+      },(d.beat[1].ms ) / d.tempo);
   };
 
   // Play the single instrument in own beat tempo
@@ -1013,19 +989,37 @@ app.controller("DmController", function($scope, $compile) {
 			  toastr.warning('Select an <strong>Instrument</strong> from the library');
 
 		  } else {
-			  d.newpattern.inst.text = name;
-			  d.pattern.push(d.newpattern);
 
-			  d.newpattern = {
-				  inst: {text: '', mute: false, vol: 5, audio: null},
-				  clock: 1,
-				  view: 16,
-				  shift: 0,
-				  cycle: 0,
-				  beat: d.beat[8],
-				  steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			  };
+			  let newpattern = null;
 
+		  	if (d.pattern[d.pattern.length - 1]) {
+		  		let last = JSON.parse(JSON.stringify(d.pattern[d.pattern.length - 1]));
+		  		let newbeat = last.beat;
+		  		let newview = last.view;
+		  		let newsteps = last.steps;
+
+				  newpattern = {
+					  inst: {text: name, mute: false, vol: 5, audio: null},
+					  clock: 1,
+					  view: newview,
+					  shift: 0,
+					  cycle: 0,
+					  beat: newbeat,
+					  steps: newsteps
+				  };
+			  } else {
+				  newpattern = {
+					  inst: {text: name, mute: false, vol: 5, audio: null},
+					  clock: 1,
+					  view: 16,
+					  shift: 0,
+					  cycle: 0,
+					  beat: d.beat[4],
+					  steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+				  };
+			  }
+
+			  d.pattern.push(newpattern);
 			  d.samples.push(d.sampleOn);
 
 			  $scope.loadSample(d.sampleOn, d.pattern.length - 1);
