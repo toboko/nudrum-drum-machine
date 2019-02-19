@@ -144,6 +144,11 @@ input, select {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    -webkit-transition: width .9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    -moz-transition: width .9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    -ms-transition: width .9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    -o-transition: width .9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: width .9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .button-step.select.clock {
@@ -163,6 +168,7 @@ input, select {
 .line-steps-height {
     height: 44px;
     padding-top: 25px;
+    overflow: hidden;
 }
 .line-labels {
     position: absolute;
