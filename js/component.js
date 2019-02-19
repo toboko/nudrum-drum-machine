@@ -437,10 +437,10 @@ app.controller("DmController", function($scope, $compile) {
 		  newbeat = newbeat === 9 ? 1 : newbeat; // round inc
 		  if (newbeat === 6) newbeat = inc ? newbeat+=1 : newbeat-=1; // skip number 6
 
-		  // to prevent multi odd time if exists an instrument with an odd time
-		  // we save it on basetime to limit user to select only that or even time
-		  // this because grid has a limited size and multiple odd time like: 5,7,4
-		  // need a wide grid built by a 1/140 unit (lcm of 5,7,4)
+		  //  - prevent multi odd time
+		  // if exists an instrument with an odd time we save it to limit user selection because
+		  // grid has a limited size and multiple odd time like: 5,7,4 need a wide grid built by
+		  // a 1/140 unit (lcm of 5,7,4)
 		  d.pattern.forEach(function (element, index) {
 			  if (element.beat.id !== 1 && element.beat.id % 2) {
 			  	basebeat = element.beat.id;
@@ -450,11 +450,13 @@ app.controller("DmController", function($scope, $compile) {
 			  }
 		  });
 
-		  // if newbeat is odd check basebeat
 		  if (basebeat !== null && newbeat % 2) {
-		  	// if newbeat is different skip because only one odd time x times is admitted
 		  	if(newbeat!== 1 && basebeat_occurs.length > 0  && newbeat !== basebeat) {
 				  newbeat = inc ? newbeat+=1 : newbeat-=1;
+			  }
+			  // skip number 6
+			  if (newbeat === 6) {
+			  	newbeat = inc ? newbeat+=1 : newbeat-=1;
 			  }
 		  }
 
@@ -523,8 +525,6 @@ app.controller("DmController", function($scope, $compile) {
 				}
 			}
 		});
-
-		$scope.updateStepsRoot()
 	};
 
   $scope.setOffset = function(inc, inst) {
