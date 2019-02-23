@@ -263,9 +263,11 @@ app.controller("DmController", function($scope, $compile) {
 		let metadata = {
 			contentType: file.type
 		};
+		let str = file.name;
+		let fileName = str.split(' ').join('_');
 
 		// Upload file and metadata to the object 'images/mountains.jpg'
-		let uploadTask = storage.ref(path).child(file.name).put(file, metadata);
+		let uploadTask = storage.ref(path).child(fileName).put(file, metadata);
 
 		// Listen for state changes, errors, and completion of the upload.
 		uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
@@ -299,8 +301,8 @@ app.controller("DmController", function($scope, $compile) {
 			}, function() {
 				// Upload completed successfully, now we can get the download URL
 				uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-					let name = file.name.replace(/\.[^/.]+$/, "");
-					db.ref("samples/" + path + '/' + name).set({url: downloadURL},
+					let fileNameDb = fileName.replace(/\.[^/.]+$/, "");
+					db.ref("samples/" + path + '/' + fileNameDb).set({url: downloadURL},
 						function (error) {
 							if (error) {
 								// The write failed...
