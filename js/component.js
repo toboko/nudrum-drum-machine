@@ -146,8 +146,8 @@ app.controller("DmController", function($scope, $compile) {
 		let w = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
 
 		$scope.initSearch();
-
-		document.getElementById('latest-pattern').style.height = (h - 273) + 'px';
+		// 118 (bottom bar) + 252 (upper side latest-pattern) + 54 (top distance) + 6 (extra)
+		document.getElementById('latest-pattern').style.height = (h - 430) + 'px';
 		// fade in
 		body.classList.remove('fade');
 		// play with spacebar
