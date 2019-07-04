@@ -11,7 +11,9 @@
     <script src="js/lib/angular.min.js"></script>
     <script src="js/lib/toastr.min.js"></script>
     <script src="js/lib/math.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-storage.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-database.js"></script>
     <script src="js/functions.js"></script>
     <script src="js/component.js?v=3"></script>
     <script>if (window.module) module = window.module;</script>
@@ -27,18 +29,34 @@
     <title>NuDrum</title>
 </head>
 <body data-ng-controller="DmController as d" class="fade">
-<div id="open-browse-area" style="display: none;" class="slide-right click" data-ng-click="openBrowseArea()"><i class="fas fa-ellipsis-v"></i> PATTERN</div>
-<div id="credit-area"><p><i class="fab fa-github"></i> Made by  <a href="https://github.com/toboko/NuDrum">@toboko</a></p></div>
-<div id="donate-area"><p><a  href="https://www.paypal.me/NicolaBombaci"><i class="fas fa-heart"></i> Donate if you like </a></p></div>
 
 <div id="navigate" class="slide-right" style="display: none;">
     <div id="folders" class="grid-area-a"></div>
     <div id="samples" class="grid-area-b"></div>
     <div id="close-navigate-area" class="grid-area-c">
         <p data-ng-click="closeNavigateArea()" class="click"><i  class="fas fa-times"></i> CLOSE</p>
-        <p class="click"><a target="_blank" href="https://github.com/toboko/NuDrum#write-rules"><i  class="fas fa-info-circle"></i> RULES</a></p>
+        <p class="click"><a target="_blank" href="https://github.com/toboko/nudrum-drum-machine#write-rules"><i  class="fas fa-info-circle"></i> RULES</a></p>
     </div>
 </div>
+<div id="control-area">
+        <div class="grid-area-a">
+            <div id="tap" class="fa fa-circle-notch click" data-ng-click="detectTempo()"></div>
+            <div id="play" class="fa fa-play click" data-ng-click="startLoop()"></div>
+            <div id="minus-tempo" class="fas fa-minus-square tempo click" data-ng-click="incTempo(false)"></div>
+            <div id="line-tempo" >
+                <div class="title">
+                    <span>{{d.tempo}} <small>BPM</small></span>
+                </div>
+            </div>
+            <div id="plus-tempo" class="fas fa-plus-square tempo click" data-ng-click="incTempo(true)"></div>
+        </div>
+        <div class="grid-area-c">
+            <div id="credit-area"><p><i class="fab fa-github"></i> Made by  <a href="https://github.com/toboko/nudrum-drum-machine">@toboko</a></p></div>
+            <div id="open-browse-area" class="click" data-ng-click="openBrowseArea()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </div>
 <div id="surface">
     <div id="edit-area" class="slide-left" style="display: none;">
         <p class="title">
@@ -113,18 +131,32 @@
         <div id="main-area">
             <div class="line-insts">
                 <div class="line-labels">
+                    <div id="set-{{d.instruments.length}}" class="box-label" data-ng-click="newInst()">
+                        <p class="grid-area-c fas fa-plus open-set"></p>
+                        <p class="grid-area-a name">New Instrument</p>
+                    </div>
                     <div data-ng-repeat="label in d.pattern track by $index"
                          ng-init="labelIndex = $index"
                          id="set-{{labelIndex}}"
                          class="box-label">
                         <div class="fa-2x"><i class="fas fa-spinner fa-spin"></i></div>
-                        <p class="grid-area-a name">{{label.inst.text}}  <small>{{label.beat.id}}|{{d.maxoffset}}</small></p>
                         <p class="grid-area-c mute" ng-click="mute(labelIndex)"><i class="fas fa-volume-up"></i></p>
-                        <p class="grid-area-d clear" ng-click="clear(labelIndex)"><i class="fas fa-broom"></i></p>
-                        <p class="grid-area-e edit" ng-click="select(labelIndex)"><i class="open-set"></i> Edit</p>
+                        <p class="grid-area-a name">{{label.inst.text}}  <small>{{label.beat.id}}|{{d.maxoffset}}</small></p>
+                        <p class="grid-area-d clear" ng-click="clear(labelIndex)"><i class="fas fa-cut"></i></p>
+                        <p class="grid-area-e clear" ng-click="copy(labelIndex)"><i class="fas fa-copy"></i></p>
+                        <p class="grid-area-f clear" ng-click="paste(labelIndex)"><i class="fas fa-paste"></i></p>
+                        <p class="grid-area-g edit" ng-click="select(labelIndex)"><i class="open-set"></i> Edit</p>
                     </div>
-                    <div id="set-{{d.instruments.length}}" class="box-label" data-ng-click="newInst()">
-                        <p class="grid-area-a"><i class="fas fa-plus open-set"></i> New Instrument</p>
+                </div>
+                <div id="inst-new" class="line-inst line-inst-margin-top line-inst-padding">
+                    <div class="line-steps line-steps-height">
+                        <div class="inst-new-par step-height">
+                            <input id="inst-new-name" aria-label="inst-new-name" type="text" placeholder="Name" />
+                        </div>
+                        <div  id="browse-new-sample" class="inst-new-par step-height">
+                            <strong class="click" data-ng-click="openNavigateArea()">Sound Library <i class="fas fa-folder-open"></i></strong><br>
+                            <small>{{d.sampleOn}}</small>
+                        </div>
                     </div>
                 </div>
                 <div id="inst-{{$index}}" class="line-inst line-inst-margin-top line-inst-padding"
@@ -142,43 +174,8 @@
                         </div>
                     </div>
                 </div>
-                <div id="inst-new" class="line-inst line-inst-margin-top line-inst-padding">
-                    <div class="line-steps line-steps-height">
-                        <div class="inst-new-par step-height">
-                            <input id="inst-new-name" aria-label="inst-new-name" type="text" placeholder="Name" />
-                        </div>
-                        <div  id="browse-new-sample" class="inst-new-par step-height">
-                            <strong class="click" data-ng-click="openNavigateArea()">Sound Library <i class="fas fa-folder-open"></i></strong><br>
-                            <small>{{d.sampleOn}}</small>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
-    </div>
-    <div id="control-area">
-        <div class="grid-area-b">
-            <div id="line-tempo" >
-                <div class="title">
-                    <p>{{d.tempo}} <br><small>BPM</small></p>
-                    <div id="minus-tempo">
-                        <i class="fas fa-caret-down tempo" data-ng-click="incTempo(false)"></i>
-                    </div>
-                    <div id="plus-tempo">
-                        <i class="fas fa-caret-up tempo" data-ng-click="incTempo(true)"></i>
-                    </div>
-                </div>
-                <div id="tap" class="white-button" data-ng-click="detectTempo()">
-                    <p>Tap</p>
-                </div>
-            </div>
-            <div id="line-play" class="">
-                <div id="play" class="white-button" data-ng-click="startLoop()">
-                    <p>{{d.plyTxt}}</p>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 </body>

@@ -1,7 +1,9 @@
 # NuDrum
-The project aims to create a polirhythmic and polymetric drum machine, through a responsive web interface. These features are limiting to all the instruments available on a drum machine (physical or digital). NuDrum unlike the previous ones, makes every single instrument polyrhythm and polymetric, in order to improve the visual learning of the various rhythmic patterns created by the users using the platform. In addition, it will be available through Google's Firebase services, to upload your own samples to the platform and share rhythmic patterns with the audience.
 
 **[Let's Play NuDrum](https://nudrum.web.app/)**
+
+The project aims to create a polirhythmic and polymetric drum machine, through a responsive web interface. These features are limiting to all the instruments available on a drum machine (physical or digital). NuDrum unlike the previous ones, makes every single instrument polyrhythm and polymetric, in order to improve the visual learning of the various rhythmic patterns created by the users using the platform. In addition, it will be available through Google's Firebase services, to upload your own samples to the platform and share rhythmic patterns with the audience.
+
 
 ### What is rhythm?
 The sense of rhythm was developed in the early stages of hominid evolution by the
@@ -24,35 +26,42 @@ Click on the link to watch a [simple polyrhythm pattern](https://nudrum.web.app/
 ### What is polymeter?
 Rhythm in music is characterized by a repeating sequence of stressed and unstressed beats (strong vs. weak; upbeat vs. downbeat) and divided into bars organized by time signature and tempo indications. In music, time signature always occurs at start of a paper sheet, it represents the rhythm of the piece.
 
- **Tips** - *Usually, modern drum machine can be set on a single time signature forcing performer to play all the rhythm in a strict way.*
+---
+*Modern drum machine can be set on a single time signature forcing performer to play all the rhythm in a strict way.*
+
+---
 
 ## How to make music
 
-With NuDrum we can set different time signature (even or odd) and find new amazing pattern.
-
-On the right of every instrument we can:
+With NuDrum we can set different time signature (even or odd) and find new amazing patterns.
 
 ![NuDrum logo](/img/actio-menu.PNG) 
 
- 1. Mute the track
- 2. Clear the row
- 3. Open the edit menu
+On the left of every instrument we can:
+ 1. **Mute** the track
+
+ On the right:
+
+ 2. **Clean** row
+ 3. **Copy** pattern
+ 4. **Paste** pattern
+ 5. Open **Edit Menu**
 
 
-The edit menu will slide from the left to the right, standing on the left margin of the screen. Here, we can choose from different options. 
+The **Edit Menu** will slide from the left to the right, standing on the left margin of the screen. Here, we can choose from different options. 
 In the first row (from the left to the right) we can:
 
 ![NuDrum logo](/img/edit-menu.PNG) 
 
-1. **volume** - Change the volume
-2. **offset** - Change the offset
-3. **beat** - Change the notes duration
+1. **Volume** - Change the volume
+2. **Offset** - Change the offset
+3. **Beat** - Change the notes duration
 
 In the second row:
-1. **shift** - Shift right (up arrow) or shift left (down arrow) the pattern.
-2. **delete** - Delete the track
+1. **Shift** - Shift right (up arrow) or shift left (down arrow) the pattern.
+2. **Delete** - Delete the track
 
-### How does beat works
+## How does beat work
 
 Beat goes from: **1** to **8**. The beat represents notes duration based on the rhythmical context [**1**] = 1/64 , [**2**] = 1/32 and so on. Default time signature is **4/4** but changing the beat it possible to turn the time and create a cross-rhythm. 
 
@@ -65,7 +74,10 @@ If we set the Kick to **7** and Ride to **4** we have obtained a 7/8 time signat
 
 If we set the Kick to **7** and Ride to **2** we have obtained a 7/8 time signature and a 7:2 Cross-Rhythm
 
-**Tips** - *Minimum offset is 3*
+---
+*Minimum offset is 3*
+
+---
 
 
 ## How to create patterns
@@ -79,7 +91,7 @@ Example - https://nudrum.web.app/?p=X5q29
 ![NuDrum logo](/img/pattern-menu.PNG) 
 
 ## How to upload
-The last row track is dedicated to create new instruments. We must choose a name for the instrument, then the sound from the **Sound Library**. Once finished, click on the plus button and try our new sample.
+The first row is dedicated to create new instruments. We must choose a name for the instrument, then the sound from the **Sound Library**. Once finished, click on the plus button and try our new sample.
 
 ![NuDrum logo](/img/newinst-menu.PNG) 
 
@@ -103,16 +115,21 @@ Every file is subject to the following constraints:
 ## Standalone application
 You can build your own standalone floating app thanks to [Electron](https://electronjs.org/)<br>
     
-    git clone https://github.com/toboko/NuDrum
-    npm install
+    git clone https://github.com/toboko/nudrum-drum-machine
+    cd nudrum-drum-machine/electron
+    yarn install
     npm start
 
-## Dependencies
+    // or if you already installed all the dependecies, from root folder..
+    npm run play
+
+## Thanks to
 [AngularJS](https://github.com/angular/angular.js) - AngularJS is a JavaScript-based open-source front-end web application framework <br>
 [Pizzicato.js](https://github.com/alemangui/pizzicato) - Library to simplify the way you create and manipulate sounds with the Web Audio API <br>
 [Math.js](https://github.com/josdejong/mathjs) - Math.js is an extensive math library for JavaScript <br>
 [Toastr](https://github.com/CodeSeven/toastr) - Simple javascript toast notification <br>
-[jQuery](https://github.com/jquery/jquery) - jQuery JavaScript Library 
+[Electron](https://github.com/jlongster/electron-with-server-example) - Client/Server implementation <br>
+[jQuery](https://github.com/jquery/jquery) - jQuery JavaScript library 
 
 ## Copyright
 NuDrum is hosted on [Google Firebase](https://firebase.google.com/) services
@@ -122,5 +139,5 @@ Copyright © 2018-2019 All the rights reserved to Nicola Bombaci
 ## Licence
 
 NuDrum is under Academic Free License 3.0
-[(AFL)](https://tldrlegal.com/license/academic-free-license-3.0-\(afl\))
+[(AFL3)](https://tldrlegal.com/license/academic-free-license-3.0-(afl))
 
