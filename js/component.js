@@ -101,7 +101,7 @@ app.controller("DmController", function($scope, $compile) {
   let lstTempo = -1;
   let avgTempo = [0, 0, 0, 0, 0, 0];
 
-   d.trkOn = 0; // index track selected
+   d.trkOn = null; // index track selected
    d.sampleOn = '';
    d.tempo  = DEFAULTTEMPO;
    d.plyTxt = document.getElementById('play');
@@ -357,27 +357,16 @@ app.controller("DmController", function($scope, $compile) {
 
 
             setTimeout(function () {
-                let set = document.getElementById("set-" + inst);
+                let set = document.getElementById("inst-" + inst);
                 let filterVal = 'blur(0px)';
-
                 // Remove loading icon
-                set.querySelector(".fa-2x").style.zIndex = '0';
-
+                set.querySelector(".fa-2x").style.zIndex = '-1';
                 // Remove blur on loading
-                set.querySelectorAll("p")
-                    .forEach(function (value) {
-                        value.style.filter = filterVal;
-                        value.style.webkitFilter = filterVal;
-                        value.style.pointerEvents = 'visible'
-                    });
-
-                document.getElementById("inst-" + inst)
-                    .querySelectorAll(".button-step")
-                    .forEach(function (value) {
-                        value.style.filter = filterVal;
-                        value.style.webkitFilter = filterVal;
-                        value.style.pointerEvents = 'visible'
-                    });
+                set.querySelectorAll(".line-steps").forEach(function (value) {
+                    value.style.filter = filterVal;
+                    value.style.webkitFilter = filterVal;
+                    value.style.pointerEvents = 'visible'
+                });
 
                 $scope.resetClock(inst);
                 $scope.updateStepsRoot(inst);
@@ -623,18 +612,28 @@ app.controller("DmController", function($scope, $compile) {
         if (d.pattern.length === 0) {
           $scope.closeEditArea();
           d.maxoffset = 64;
-    }
-
+        }
+        $scope.select(null);
         $scope.updateStepsRoot()
     };
 
     $scope.select = function(inst) {
-        let el = document.getElementById('edit-area');
-        el.style.display = null;
-        setTimeout(function() {
-            el.classList.remove('slide-left');
-        }, 50);
-        d.trkOn = inst;
+        if (inst !== null) {
+            document.querySelectorAll('.template-2').forEach(function(e) {
+                e.style.display = 'none';
+            });
+            if (d.trkOn !== inst) {
+                document.getElementById('edit-set-' + inst ).style.display = 'grid';
+                d.trkOn = inst;
+            } else {
+                d.trkOn = null;
+            }
+        } else {
+            document.querySelectorAll('.template-2').forEach(function(e) {
+                e.style.display = 'none';
+            });
+            d.trkOn = null;
+        }
     };
 
     $scope.closeEditArea = function() {
@@ -781,23 +780,13 @@ app.controller("DmController", function($scope, $compile) {
                   // Blur loading tracks
                     d.pattern.forEach(function (val, inst) {
                         if (document.getElementById("inst-" + inst) !== null) {
-                            let steps = document.getElementById("inst-" + inst)
-                                .querySelectorAll(".button-step");
-
-                            // Blur instruments on loading
+                            let set = document.getElementById("inst-" + inst)
                             let filterVal = 'blur(5px)';
-                            let set = document.getElementById("set-" + inst);
 
                             // Add loading icon
                             set.querySelector(".fa-2x").style.zIndex = '1';
-
-                            set.querySelectorAll('p').forEach(function (value) {
-                                value.style.filter = filterVal;
-                                value.style.webkitFilter = filterVal;
-                                value.style.pointerEvents = 'none'
-                            });
-
-                            steps.forEach(function (value) {
+                            // Blur instruments on loading
+                            set.querySelectorAll('.line-steps').forEach(function (value) {
                                 value.style.filter = filterVal;
                                 value.style.webkitFilter = filterVal;
                                 value.style.pointerEvents = 'none'
@@ -807,6 +796,7 @@ app.controller("DmController", function($scope, $compile) {
 
                   $scope.loadAllSample();
                   $scope.updateBeat();
+                  $scope.select(null);
 
               } else {
                   // The read failed...
@@ -866,20 +856,24 @@ $scope.paste = function(inst) {
 
   $scope.checkMix = function() {
     d.pattern.forEach(function(value) {
-      if (value.inst.audio != null && !value.mute) {
+      if (value.inst.audio != null && !value.inst.mute) {
           value.inst.audio.volume = value.inst.vol / MAXVOLUME;
       }
     });
   };
 
   $scope.mute = function(inst) {
-    d.pattern[inst].inst.mute = !d.pattern[inst].inst.mute;
-    d.pattern[inst].inst.audio.volume = d.pattern[inst].inst.mute ? 0.0 : d.pattern[inst].inst.vol / MAXVOLUME;
-    if (d.pattern[inst].inst.mute) {
-        document.getElementById('set-' + inst).querySelector('.mute').innerHTML = '<i class="fas fa-volume-mute"></i>';
-    } else {
-        document.getElementById('set-' + inst).querySelector('.mute').innerHTML = '<i class="fas fa-volume-up"></i>';
-    }
+      if(d.pattern[inst].inst.mute) {
+        d.pattern[inst].inst.mute = false;
+        d.pattern[inst].inst.audio.volume = d.pattern[inst].inst.vol  / MAXVOLUME;
+        document.getElementById('inst-' + inst).querySelector('.mute').innerHTML = '<i class="fas fa-volume-up"></i>';
+
+      } else {
+        d.pattern[inst].inst.mute = true;
+        d.pattern[inst].inst.audio.mute = true;
+        d.pattern[inst].inst.audio.volume = 0.0;
+        document.getElementById('inst-' + inst).querySelector('.mute').innerHTML = '<i class="fas fa-volume-mute"></i>';
+      }
   };
 
   /**  PLAYING functions
@@ -1023,10 +1017,9 @@ $scope.paste = function(inst) {
               let newpattern = null;
 
               if (d.pattern[0]) {
-                  let last = JSON.parse(JSON.stringify(d.pattern[0]));
-                  let newbeat = last.beat;
-                  let newview = last.view;
-                  let newsteps = last.steps;
+                  let newbeat = d.pattern[0] .beat;
+                  let newview = d.pattern[0].view;
+                  let newsteps = d.pattern[0].steps.slice(0);
 
                   newpattern = {
                       inst: {text: name, mute: false, vol: 5, audio: null},
@@ -1087,23 +1080,16 @@ $scope.paste = function(inst) {
   };
 
     let updateSteps = function (pattern, inst) {
-            let steps = document.getElementById("inst-" + inst).querySelectorAll(".button-step");
+            let set = document.getElementById("inst-" + inst)
+            let steps = set.querySelectorAll(".button-step");
+            let filterVal = 'blur(5px)';
 
             // Blur instruments on loading
             if (pattern.inst.audio === null) {
-                let filterVal = 'blur(5px)';
-                let set = document.getElementById("set-" + inst);
-
                 // Add loading icon
                 set.querySelector(".fa-2x").style.zIndex = '1';
 
-                set.querySelectorAll('p').forEach(function (value) {
-                    value.style.filter = filterVal;
-                    value.style.webkitFilter = filterVal;
-                    value.style.pointerEvents = 'none'
-                });
-
-                steps.forEach(function (value) {
+                set.querySelectorAll('.line-steps').forEach(function (value) {
                     value.style.filter = filterVal;
                     value.style.webkitFilter = filterVal;
                     value.style.pointerEvents = 'none'

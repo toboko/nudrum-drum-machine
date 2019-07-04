@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "NuDrum - Drum Machine",
+    "short_name": "nudrum",
     "icons": [
         {
             "src": "/img/favicon/android-chrome-192x192.png",
@@ -15,6 +15,6 @@
     ],
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
-    "start_url": "https://nudrum.netlify.com/",
+    "start_url": "https://nudrum.web.app/",
     "display": "standalone"
 }

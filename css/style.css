@@ -178,22 +178,20 @@ input, select {
 }
 .line-steps-height {
   height: 44px;
-  padding-top: 25px;
+  padding-top: 7px;
   overflow: hidden;
 }
-.line-labels {
-  position: absolute;
-  width: 100%;
+.template-1 {
+  grid-template-areas: "c a a a a b b b b b b b b b b b b d e f g";
 }
-
+.template-2 {
+  grid-template-areas: "a a a b b b c c c d d d g";
+}
 .box-label {
   display: grid;
   align-content: center;
   grid-template-columns: repeat(20, 1fr);
-  grid-template-areas: "c a a a a b b b b b b b b b b b b d e f g";
-  
   height: 25px;
-  margin-bottom: 59px;
   margin-left: 7px;
   position: relative;
   width: 98%;
@@ -202,6 +200,13 @@ input, select {
   -o-animation:      1s ease-out 0s 1 slideInFromLeft;
   -ms-transition:    1s ease-out 0s 1 slideInFromLeft;
   animation:         1s ease-out 0s 1 slideInFromLeft;
+}
+.box-label.template-2 {
+  display: none;
+}
+.box-label.template-2 > .grid-area-g {
+  text-align: right;
+  margin: 0;
 }
 .box-label > p {
   position: relative;
@@ -239,7 +244,7 @@ input, select {
   right: -2px;
 }
 
-#edit-area, #browse-area {
+#browse-area {
   position: absolute;
   z-index: 4;
   background: #3df4c9;
@@ -254,28 +259,11 @@ input, select {
   -o-transition: all 500ms;
   transition: all 500ms;
 }
-#edit-area {
-  width: 300px;
-  top: 54px;
-  left: 20px;
-}
-#credit-area, #donate-area {
-  padding: 0 15px;
-  color: #005f42;
-  -webkit-transition: all 500ms;
-  -moz-transition: all 500ms;
-  -ms-transition: all 500ms;
-  -o-transition: all 500ms;
-  transition: all 500ms;
-}
-#credit-area p, #donate-area p {
-  margin: 0;
-}
 #credit-area {
   bottom: 75px;
 }
-#donate-area {
-  bottom: 50px;
+#credit-area p {
+  margin: 0;
 }
 #close-navigate-area {
   text-align: center;
@@ -353,33 +341,13 @@ input, select {
   pointer-events: none;
   background-image: linear-gradient(to bottom, rgba(255,255,255, 0), rgb(61, 244, 201) 100%);
 }
-#edit-area .fa-times-circle {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-}
 #browse-area .fa-times-circle {
   position: absolute;
   top: 16px;
   left: 16px;
 }
-#edit-area .title,
-#browse-area .title {
+.title {
   text-align: center;
-}
-.line-set {
-  display: grid;
-  width: 100%;
-  margin-top: 5px;
-  margin-bottom: 16px;
-  text-align: center;
-  align-content: center;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-areas: "a a b b c c";
-  transition: 200ms linear;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
 }
 .line-set-large{
   min-width: 100%;
@@ -395,29 +363,6 @@ input, select {
 }
 .line-set-large:hover{
   background: #a0f5db;
-}
-.line-set > div {
-  position: relative;
-  margin: auto;
-  align-content: center;
-}
-.line-set > div p {
-  margin: 0;
-}
-.line-set > div .value {
-  margin-bottom: 4px;
-  font-weight: bold;
-}
-.line-set > div .title {
-  position: absolute;
-  transform: rotate(90deg) translateX(-14px) translateY(13px);
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 200%;
-  pointer-events: none;
-  
 }
 .number {
   display: block;
@@ -439,6 +384,7 @@ input, select {
 .line-insts {
   margin-top: 25px;
   position: relative;
+  margin-bottom: 25px;
 }
 .line-inst {
   width: 960px;
@@ -512,7 +458,6 @@ input, select {
   overflow-y: scroll;
   -ms-overflow-style: none;
   overflow: -moz-scrollbars-none;
-  margin-bottom: 40px;
 }
 #main-area > div {
   display: block;
@@ -557,9 +502,6 @@ input, select {
 #update-area > div {
   margin: 0 5px;
   padding: 0 5px;
-}
-#inst-new > div{
-  display: inline-table;
 }
 .inst-new-par {
   display: inline-block;
@@ -649,10 +591,11 @@ div#simple-set > div {
 
 .fa-2x {
   position: absolute;
-  z-index: 0;
+  pointer-events: none;
+  z-index: 1;
   left: 0;
   right: 0;
-  top: 50%;
+  top: 20%;
   text-align: center;
   opacity: 0.8;
 }

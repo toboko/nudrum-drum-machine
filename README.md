@@ -99,7 +99,7 @@ We can choose from many sounds or upload ours. Clicking on **Sound Library** wil
 
 ![NuDrum logo](/img/upload-menu.PNG) 
 
-### Storage's rules
+## Storage's rules
 
 All file are downloaded and uploaded on Firebase Storage. Any operation must be follow some rules to read and write; in particular files are allow to be written into the following paths:
 
