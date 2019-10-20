@@ -4,6 +4,7 @@
 
 The project aims to create a polirhythmic and polymetric drum machine, through a responsive web interface. These features are limiting to all the instruments available on a drum machine (physical or digital). NuDrum unlike the previous ones, makes every single instrument polyrhythm and polymetric, in order to improve the visual learning of the various rhythmic patterns created by the users using the platform. In addition, it will be available through Google's Firebase services, to upload your own samples to the platform and share rhythmic patterns with the audience.
 
+![NuDrum Show](./img/nudrum-show-sd.gif)
 
 ### What is rhythm?
 The sense of rhythm was developed in the early stages of hominid evolution by the
