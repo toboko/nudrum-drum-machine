@@ -46,6 +46,40 @@
       class="fas fa-info-circle"></i> RULES</a></p>
   </div>
 </div>
+<div id="share-dialog" style="display: none;">
+  <div class="share-dialog-content">
+    <div class="share-dialog-header">
+      <h3>Share Your Pattern</h3>
+      <button class="close-button" ng-click="closeShareDialog()">&times;</button>
+    </div>
+
+    <p>Copy this link to share your pattern:</p>
+    <div class="share-url-container">
+      <input id="share-url-input" type="text" readonly>
+      <button id="copy-url-button" ng-click="copyShareUrl()">Copy</button>
+    </div>
+
+    <p>Or share directly:</p>
+    <div class="social-share-buttons">
+      <!-- Social sharing links will be dynamically updated with correct URLs -->
+      <a id="x-share" class="social-button x-share" target="_blank">
+        <i class="fab fa-x"></i>
+      </a>
+      <a id="facebook-share" class="social-button facebook-share" target="_blank">
+        <i class="fab fa-facebook-f"></i> Facebook
+      </a>
+      <a id="linkedin-share" class="social-button linkedin-share" target="_blank">
+        <i class="fab fa-linkedin-in"></i> LinkedIn
+      </a>
+      <a id="whatsapp-share" class="social-button whatsapp-share" target="_blank">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </a>
+      <a id="email-share" class="social-button email-share" href="#">
+        <i class="fas fa-envelope"></i> Email
+      </a>
+    </div>
+  </div>
+</div>
 <div id="control-area">
   <div class="grid-area-a">
     <div id="play" class="fa fa-play click" data-ng-click="startLoop()"></div>
@@ -56,7 +90,8 @@
       </div>
     </div>
     <div id="plus-tempo" class="fas fa-plus tempo click" data-ng-click="incTempo(true)"></div>
-    <div id="tap" class="fa fa-circle-notch click" data-ng-click="detectTempo()"></div>
+    <div id="tap" class="fa fa-drum click" data-ng-click="detectTempo()"></div>
+    <div id="share-button" class="fas fa-share-alt" ng-click="sharePattern()"></div>
   </div>
 </div>
 <div id="copy-area">
@@ -71,28 +106,7 @@
 <div id="surface">
   <div id="browse-area">
     <div class="text-center">
-      <p class="title">
-        <strong>Save Your Pattern</strong>
-        <i data-ng-click="closeBrowseArea()" class="fas fa-times-circle"></i>
-      </p>
-      <div class="inst-new-par step-height">
-        <input id="pattern-new-name" aria-label="pattern-new-name" type="text" placeholder="Name"/>
-      </div>
-      <div class="inst-new-par step-height">
-        <div id="save" class="click" data-ng-click="save()">
-          <p><i class="fas fa-save"></i> Save</p>
-        </div>
-      </div>
-    </div>
-    <div class="text-center">
-      <div class="inst-new-par step-height">
-        <input id="pattern-load-name" aria-label="pattern-new-name" type="text" placeholder="Pattern Code"/>
-      </div>
-      <div class="inst-new-par step-height">
-        <div id="load" class="click" data-ng-click="load()">
-          <p><i class="fas fa-share"></i> Load</p>
-        </div>
-      </div>
+      <i data-ng-click="closeBrowseArea()" class="fas fa-times-circle"></i>
     </div>
     <p class="title">
       <strong>Latest Patterns</strong>

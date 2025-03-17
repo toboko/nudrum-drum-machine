@@ -1,8 +1,8 @@
 @font-face {
   font-family: 'hkgrotesk';
-  src: url('font/hk-grotesk/hkgrotesk-regular.woff2') format('woff2'),
-  url('font/hk-grotesk/hkgrotesk-regular.woff') format('woff'),
-  url('font/hk-grotesk/hkgrotesk-regular.ttf') format('truetype');
+  src: url('/assets/font/hk-grotesk/hkgrotesk-regular.woff2') format('woff2'),
+  url('/assets/font/hk-grotesk/hkgrotesk-regular.woff') format('woff'),
+  url('/assets/font/hk-grotesk/hkgrotesk-regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -48,7 +48,7 @@ a:hover {
   color: white;
   text-decoration: none;
 }
-i, .button-step, .white-button, .box-label, .click {
+i, .button-step, .white-button, .fa, .fas, .click {
   cursor: pointer;
 }
 
@@ -275,7 +275,7 @@ input, select {
   align-content: start;
   grid-template-columns: repeat(6, 1fr);
   grid-template-areas: "a a b b b c";
-  
+
   background-color: #3df4c9;
   position: absolute;
   text-align: left;
@@ -283,7 +283,7 @@ input, select {
   height: 100%;
   z-index: 1002;
   padding: 30px;
-  
+
   -webkit-transition: all 0.7s;
   -moz-transition: all 0.7s;
   -ms-transition: all 0.7s;
@@ -406,7 +406,7 @@ input, select {
   background-color: #c5c5c5;
 }
 .line-inst:nth-child(even) {
-  background-color: #ececec;
+  background-color: #e3e3e3;
 }
 .line-inst-margin-top {
   margin-top: 6px;
@@ -615,6 +615,14 @@ div#simple-set > div {
 
 .fa, .fas {
   font-size: 1.1em;
+  -webkit-transition: color .1s;
+  -moz-transition: color .1s;
+  -ms-transition: color .1s;
+  -o-transition: color .1s;
+  transition: color .1s;
+}
+.fa:hover, .fas:hover {
+  color: #fdfeff;
 }
 .fa-2x {
   position: absolute;
@@ -625,4 +633,133 @@ div#simple-set > div {
   top: 20%;
   text-align: center;
   opacity: 0.8;
+}
+
+#share-dialog {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(24, 24, 24, 0.5);
+  position: absolute;
+  text-align: left;
+  z-index: 10000;
+  padding: 30px;
+
+  -webkit-transition: all 0.7s;
+  -moz-transition: all 0.7s;
+  -ms-transition: all 0.7s;
+  -o-transition: all 0.7s;
+  transition: all 0.7s;
+}
+
+.share-dialog-content {
+  background-color: #1e1e1e;
+  color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #444;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 5px;
+}
+
+.share-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.share-dialog-header h3 {
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.share-url-container {
+  display: flex;
+  margin: 15px 0;
+}
+
+#share-url-input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #444;
+  background: #333;
+  color: #fff;
+  border-radius: 4px 0 0 4px;
+}
+
+#copy-url-button {
+  padding: 8px 15px;
+  background: #41d2af;
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  border-radius: 0 4px 4px 0;
+}
+
+.social-share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.social-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 15px;
+  border-radius: 4px;
+  color: white;
+  text-decoration: none;
+  min-width: 100px;
+  transition: opacity 0.2s;
+}
+
+.social-button:hover {
+  opacity: 0.9;
+}
+
+.social-button i {
+  margin-right: 8px;
+}
+
+.x-share {
+  background-color: #000000;
+}
+
+.facebook-share {
+  background-color: #4267B2;
+}
+
+.linkedin-share {
+  background-color: #0077B5;
+}
+
+.whatsapp-share {
+  background-color: #25D366;
+}
+
+.email-share {
+  background-color: #D44638;
+}
+
+#share-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+  font-weight: bold;
 }

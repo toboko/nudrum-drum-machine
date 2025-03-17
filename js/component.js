@@ -656,7 +656,7 @@ app.controller("DmController", function ($scope, $compile) {
     el.classList.add('slide-right');
     setTimeout(function () {
       el.style.display = 'none';
-    }, 500);
+    }, 700);
   };
 
   $scope.closeBrowseArea = function () {
@@ -664,7 +664,15 @@ app.controller("DmController", function ($scope, $compile) {
     el.classList.add('slide-right');
     setTimeout(function () {
       el.style.display = 'none';
-    }, 50);
+    }, 700);
+  };
+
+  $scope.closeShareDialog = function() {
+    const el = document.getElementById('share-dialog');
+    el.classList.add('slide-right');
+    setTimeout(function () {
+      el.style.display = 'none';
+    }, 700);
   };
 
   $scope.openNavigateArea = function () {
@@ -683,72 +691,17 @@ app.controller("DmController", function ($scope, $compile) {
     }, 50);
   };
 
-  /* Pattern Functions
-
-
-
-
-   */
-
-  $scope.save = function () {
-    let id = short();
-    // copy pattern
-    let pattern = JSON.parse(JSON.stringify(d.pattern));
-    if (pattern.length <= 0) {
-      toastr.warning('<strong>Pattern</strong> cannot be empty');
-      return 0;
-    }
-    // normalize the pattern
-    // - clock to 0
-    // - audio to null
-    pattern.forEach(function (value) {
-      value.clock = 1;
-      value.inst.audio = null
-    });
-    pattern = JSON.stringify(pattern);
-
-    let samples = JSON.stringify(d.samples);
-    let when = Date.now();
-    let hash = md5(pattern);
-    let title = short(24);
-    let tempo = d.tempo;
-
-    if (title === '') {
-      toastr.warning('<strong>Name</strong> is required');
-
-    } else {
-      // check if there is duplicated pattern
-      db.ref("patterns").orderByChild("hash").equalTo(hash).on("value", snapshot => {
-        const payload = {
-          id: id,
-          hash: hash,
-          tempo: tempo,
-          when: when,
-          pattern: pattern,
-          samples: samples,
-          star: 0,
-          title: title
-        }
-        // pattern is new
-        if (!snapshot.exists()) {
-          db.ref("patterns/" + id).set(
-            payload,
-            function (error) {
-              if (error) {
-                // The write failed...
-                toastr.error(error, 'Error!');
-              } else {
-                // Data saved successfully!
-                toastr.success('Pattern uploaded with id <strong>' + id + '</strong>', 'Success');
-              }
-            }
-          );
-        } else {
-          toastr.warning('<strong>Pattern</strong> already exists');
-        }
-      });
-    }
+  $scope.openShareDialog = function() {
+    const el = document.getElementById('share-dialog');
+    el.style.display = null;
+    setTimeout(function () {
+      el.classList.remove('slide-right');
+    }, 50);
   };
+
+  /* Pattern Functions
+   *
+   */
 
   $scope.load = function (key) {
     key = (typeof key !== 'undefined') ? key : document.getElementById('pattern-load-name').value;
@@ -809,6 +762,134 @@ app.controller("DmController", function ($scope, $compile) {
         }
       });
     }
+  };
+
+  // Share Pattern function with local caching
+  $scope.sharePattern = function() {
+    // Check if we have a pattern to share
+    if (d.pattern.length <= 0) {
+      toastr.warning('<strong>Pattern</strong> cannot be empty');
+      return;
+    }
+
+    // Copy pattern and normalize it (similar to save function)
+    let pattern = JSON.parse(JSON.stringify(d.pattern));
+    pattern.forEach(function(value) {
+      value.clock = 1;
+      value.inst.audio = null;
+    });
+
+    // Create a hash of the current pattern to check if it's changed
+    let patternString = JSON.stringify(pattern);
+    let currentHash = md5(patternString);
+
+    // Check if we already have this pattern stored locally
+    let storedPatternId = localStorage.getItem('lastSharedPatternId');
+    let storedPatternHash = localStorage.getItem('lastSharedPatternHash');
+
+    // If the pattern is the same as the last shared one, just show the dialog with the existing URL
+    if (storedPatternId && storedPatternHash && storedPatternHash === currentHash) {
+      // Pattern hasn't changed, use the existing shared URL
+      const shareUrl = window.location.origin + window.location.pathname + '?p=' + storedPatternId;
+
+      // Update share dialog with the URL and social links
+      updateShareDialog(shareUrl, "Check out my drum pattern!");
+
+      // Show the dialog
+      $scope.openShareDialog();
+      return;
+    }
+
+    // Create a unique ID for this new pattern
+    let id = short();
+    let samples = JSON.stringify(d.samples);
+    let when = Date.now();
+    let title = "Share_" + short(12);
+    let tempo = d.tempo;
+
+    // Create the payload
+    const payload = {
+      id: id,
+      hash: currentHash,
+      tempo: tempo,
+      when: when,
+      pattern: patternString,
+      samples: samples,
+      star: 0,
+      title: title
+    };
+
+    // Save to Firebase
+    db.ref("patterns/" + id).set(
+      payload,
+      function(error) {
+        if (error) {
+          toastr.error(error, 'Error sharing pattern!');
+        } else {
+          // Generate shareable URL
+          const shareUrl = window.location.origin + window.location.pathname + '?p=' + id;
+
+          // Store the pattern ID and hash locally for future reference
+          localStorage.setItem('lastSharedPatternId', id);
+          localStorage.setItem('lastSharedPatternHash', currentHash);
+
+          // Update share dialog with the URL and social links
+          updateShareDialog(shareUrl, "Check out my drum pattern!");
+
+          // Show the dialog
+          $scope.openShareDialog();
+
+          toastr.success('Pattern shared! Copy the link to share with others.', 'Success');
+        }
+      }
+    );
+  };
+
+  // Helper function to update all social sharing links
+  function updateShareDialog(url, title) {
+    // Set the URL in the input field
+    document.getElementById('share-url-input').value = url;
+
+    // Encode URL and title for sharing
+    const encodedUrl = encodeURIComponent(url);
+    const encodedTitle = encodeURIComponent(title);
+
+    // Update social sharing links according to the blog post format
+
+    // X (formerly Twitter)
+    // Format: https://twitter.com/intent/tweet?text=[TITLE]&url=[URL]
+    document.getElementById('x-share').href =
+      'https://twitter.com/intent/tweet?text=' + encodedTitle + '&url=' + encodedUrl;
+
+    // Facebook
+    // Format: https://www.facebook.com/sharer/sharer.php?u=[URL]
+    document.getElementById('facebook-share').href =
+      'https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl;
+
+    // LinkedIn
+    // Format: https://www.linkedin.com/shareArticle?mini=true&url=[URL]&title=[TITLE]&source=[SOURCE/DOMAIN]
+    document.getElementById('linkedin-share').href =
+      'https://www.linkedin.com/shareArticle?mini=true&url=' + encodedUrl +
+      '&title=' + encodedTitle + '&source=' + encodeURIComponent(window.location.hostname);
+
+    // WhatsApp
+    // Format: https://api.whatsapp.com/send?text=[TITLE]%20[URL]
+    document.getElementById('whatsapp-share').href =
+      'https://api.whatsapp.com/send?text=' + encodedTitle + '%20' + encodedUrl;
+
+    // Email
+    // Format: mailto:?subject=[TITLE]&body=[TITLE]%20[URL]
+    document.getElementById('email-share').href =
+      'mailto:?subject=' + encodedTitle + '&body=' + encodedTitle + '%20' + encodedUrl;
+  }
+
+  // Function to copy the share URL to clipboard
+  $scope.copyShareUrl = function() {
+    const copyText = document.getElementById("share-url-input");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    toastr.success('Link copied to clipboard!');
   };
 
   /**  STEPS functions
