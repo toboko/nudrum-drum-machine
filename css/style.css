@@ -13,7 +13,8 @@ html {
   height: 100%;
 }
 ::-webkit-scrollbar {
-  width: 0px;
+  width: 0;
+  height: 0;
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
@@ -243,28 +244,6 @@ input, select {
 .line-units > div strong.right-min {
   right: -2px;
 }
-
-#browse-area {
-  position: absolute;
-  z-index: 4;
-  background: #3df4c9;
-  border: 2px solid #005f42;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  padding: 16px 0;
-  -webkit-transition: all 500ms;
-  -moz-transition: all 500ms;
-  -ms-transition: all 500ms;
-  -o-transition: all 500ms;
-  transition: all 500ms;
-}
-#credit-area {
-  bottom: 75px;
-}
-#credit-area p {
-  margin: 0;
-}
 #close-navigate-area {
   text-align: center;
   color: #005f42;
@@ -325,22 +304,18 @@ input, select {
   -o-transition: all 500ms;
   transition: all 500ms;
 }
+/* Make sure the browse area has a fixed height and proper scrolling */
 #browse-area {
-  width: 300px;
+  padding: 0 10px;
+  height: auto;
+  max-height: 80vh;
   top: 54px;
   right: 20px;
+  left: 0;
+  margin: 0 auto;
+  overflow: hidden;
 }
-#browse-area:after {
-  content  : "";
-  position : absolute;
-  z-index  : 1;
-  bottom   : 0;
-  left     : 0;
-  height   : 1em;
-  width    : 100%;
-  pointer-events: none;
-  background-image: linear-gradient(to bottom, rgba(255,255,255, 0), rgb(61, 244, 201) 100%);
-}
+
 #browse-area .fa-times-circle {
   position: absolute;
   top: 16px;
@@ -349,20 +324,27 @@ input, select {
 .title {
   text-align: center;
 }
-.line-set-large{
-  min-width: 100%;
+.line-set-large {
+  display: inline-block;
+  min-width: 180px;
+  max-width: 350px;
+  margin-right: 15px;
+  vertical-align: top;
+  white-space: normal;
   text-align: left;
-  align-content: center;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-areas: "a a a";
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
   transition: 200ms linear;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
   padding: 0 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.line-set-large:hover{
+.line-set-large:hover {
   background: #a0f5db;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 .number {
   display: block;
@@ -384,7 +366,7 @@ input, select {
 .line-insts {
   margin-top: 25px;
   position: relative;
-  margin-bottom: 20vh;
+  margin-bottom: 38vh;
   overflow: hidden;
 }
 .line-inst {
@@ -441,6 +423,8 @@ input, select {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
 }
 #window:after {
   content: '';
@@ -498,27 +482,63 @@ input, select {
   grid-template-areas: "a a a a b b c c";
   background: #3df4c9;
 }
-#copy-area > div > p {
-  text-align: left;
-}
-
-#copy-area > .grid-area-c {
-  margin-right: 15px;
+#copy-area .grid-area-c {
   text-align: right;
 }
-#latest-pattern {
-  position: relative;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  height: 50vh;
+#app-name {
+  font-weight: bold;
 }
+#copy-area p {
+  margin: 8px;
+}
+
+#latest-pattern {
+  display: inline-block;
+  position: relative;
+  overflow-y: hidden;
+  overflow-x: auto;
+  height: auto;
+  white-space: nowrap;
+  padding: 15px 0;
+  min-width: 100%;
+}
+
+#latest-pattern-container {
+  position: relative;
+  width: 100%;
+  height: 90px;
+  overflow-x: auto;
+  overflow-y: hidden; /* Ensure vertical scrolling is disabled */
+  cursor: grab; /* Show a grab cursor to indicate scrollable area */
+}
+
+#latest-pattern-container:active {
+  cursor: grabbing; /* Change cursor when actively scrolling */
+}
+
+#latest-pattern-container:after {
+  content: '';
+  pointer-events: none;
+  width: 100vw;
+  height: 40px;
+  top: 120px;
+  position: fixed;
+  z-index: 998;
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&0+0,1+100 */
+  background: -moz-linear-gradient(bottom,  rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(bottom,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+
+}
+
 #surface {
   display: block;
   margin: auto;
-  width: min-content;
-  width: -moz-fit-content;
-
+  width: 100%;
+  max-width: 100%;
 }
+
 #update-area {
   display: inline-flex;
   max-width: 1288px;

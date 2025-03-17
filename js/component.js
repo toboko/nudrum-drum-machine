@@ -28,6 +28,7 @@ app.controller("DmController", function ($scope, $compile) {
   const db = firebase.database();
 
   // On load update latest pattern uploaded
+// On load update latest pattern uploaded
   db.ref("patterns/").orderByChild("when").on("value", data => {
     let latestPattern = document.getElementById('latest-pattern');
     latestPattern.innerHTML = '';
@@ -42,7 +43,10 @@ app.controller("DmController", function ($scope, $compile) {
         return x > y ? -1 : x < y ? 1 : 0;
       });
 
-      bytime.forEach(function (value) {
+      // Limit to 10 most recent patterns for better performance
+      const recentPatterns = bytime.slice(0, 15);
+
+      recentPatterns.forEach(function (value) {
         let id = value.id;
         let title = value.title
         let when = value.when;
@@ -66,17 +70,18 @@ app.controller("DmController", function ($scope, $compile) {
 
         let child = document.createElement('div');
         child.classList.add('line-set-large', 'click');
-        child.innerHTML = '<div class="line-set-large click">' +
-          '<div class="grid-area-a" data-ng-click="load(\'' + id + "')\">" +
-          "<p><i class=\"fas fa-caret-right\"></i> <strong>[" + id + "]</strong> <small>" + when + "</small> " +
-          "<br>" + title + "</p></div>";
+        child.setAttribute('data-ng-click', 'load(\'' + id + '\')');
+        child.innerHTML =
+          '<div>' +
+          "<p><strong>[" + id + "]</strong> <small>" + when + "</small> " +
+          "<br></p></div>";
         let $el = latestPattern.appendChild(child);
         $compile($el)($scope);
       });
     } else {
       let child = document.createElement('div');
-      child.classList.add('line-set-large', 'click');
-      child.innerHTML = '<div class="grid-area-a"><p>No Patterns</p></div>';
+      child.classList.add('line-set-large');
+      child.innerHTML = '<div><p>No Patterns</p></div>';
       let $el = latestPattern.appendChild(child);
       $compile($el)($scope);
     }
@@ -168,12 +173,8 @@ app.controller("DmController", function ($scope, $compile) {
 
   $scope.$watch('$viewContentLoaded', function () {
     let body = document.body, html = document.documentElement;
-    let h = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    let w = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
 
     $scope.initSearch();
-    // 118 (bottom bar) + 252 (upper side latest-pattern) + 54 (top distance) + 6 (extra)
-    document.getElementById('latest-pattern').style.height = (h - 380) + 'px';
     // fade in
     body.classList.remove('fade');
     // play with spacebar
@@ -187,10 +188,11 @@ app.controller("DmController", function ($scope, $compile) {
     });
     // prevent spacebar scroll on #latest-pattern
     window.addEventListener('keydown', function (e) {
-      if (e.keyCode == 32 && e.target == document.body) {
+      if (e.keyCode === 32 && e.target === document.body) {
         e.preventDefault();
       }
     });
+
     // load url pattern
     let loadPat = findGetParameter("p");
 
@@ -204,9 +206,6 @@ app.controller("DmController", function ($scope, $compile) {
   $(window).resize(function () {
     let body = document.body, html = document.documentElement;
     let h = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-    $scope.$apply(function () {
-      document.getElementById('latest-pattern').style.height = (h - 380) + 'px';
-    });
   });
 
   $scope.initSearch = function () {

@@ -18,7 +18,8 @@
   <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-storage.js"></script>
   <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-database.js"></script>
   <script src="js/functions.js"></script>
-  <script src="js/component.js?v=3"></script>
+  <script src="js/event-listener.js"></script>
+  <script src="js/component.js?v=4"></script>
   <script>if (window.module) module = window.module;</script>
   <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
@@ -95,23 +96,18 @@
   </div>
 </div>
 <div id="copy-area">
+  <div class="grid-area-a">
+    <div id="app-name"><p>NuDrum - Drum Machine</p></div>
+  </div>
   <div class="grid-area-c">
-    <div id="credit-area"><p><i class="fab fa-github"></i> Made by <a
-      href="https://github.com/toboko/nudrum-drum-machine">@toboko</a></p></div>
-    <div id="open-browse-area" class="click" data-ng-click="openBrowseArea()">
-      <i class="fas fa-bars"></i>
-    </div>
+      <div id="credit-area"><p><a href="https://github.com/toboko/nudrum-drum-machine"><i class="fab fa-github"></i> Made by @toboko</a></p></div>
   </div>
 </div>
 <div id="surface">
   <div id="browse-area">
-    <div class="text-center">
-      <i data-ng-click="closeBrowseArea()" class="fas fa-times-circle"></i>
+    <div id="latest-pattern-container">
+      <div id="latest-pattern"></div>
     </div>
-    <p class="title">
-      <strong>Latest Patterns</strong>
-    </p>
-    <div id="latest-pattern"></div>
   </div>
   <div id="window">
     <div id="main-area">

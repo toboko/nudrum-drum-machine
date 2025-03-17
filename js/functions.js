@@ -1,61 +1,61 @@
-const randomCharacter = function() {
-	let possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-	return possible[Math.floor(Math.random() * possible.length)];
-};
+// Function to normalize a value
+function normal(value, max, one = true) {
+	let res = value % max;
+	return one ? (res === 0 ? max : res) : res;
+}
 
-const randomBool = function() {
-	let possible = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0];
-	return possible[Math.floor(Math.random() * possible.length)] === 1;
-};
-
-const short = function(min= 5 ) {
-	let out = [], str;
-
-	for (let i = 0; i < min; i++) {
-		str = randomCharacter();
-		str = randomBool() ? str.toUpperCase() : str;
-		out.push(str);
-	}
-	return out.join("");
-};
-
-const normal = function (i, l, a = true) {
-	i = i % l;
-	return (i === 0 && a) ? l : i;
-};
-
-const rshft = function(arr, places) {
-	for (let i = 0; i < places; i++) {
-		arr.unshift(arr.pop());
-	}
-};
-
-const lshft = function(arr, places) {
-	for (let i = 0; i < places; i++) {
+// Left shift function for arrays
+function lshft(arr, places) {
+	while (places--) {
 		arr.push(arr.shift());
 	}
-};
+	return arr;
+}
 
-const findGetParameter = function(parameterName) {
+// Right shift function for arrays
+function rshft(arr, places) {
+	while (places--) {
+		arr.unshift(arr.pop());
+	}
+	return arr;
+}
+
+// Short ID generator
+function short(len = 5) {
+	return Math.random().toString(36).substr(2, len);
+}
+
+// Get URL parameter by name
+function findGetParameter(parameterName) {
 	let result = null,
 		tmp = [];
-	let items = window.location.search.substr(1).split("&");
-	for (let index = 0; index < items.length; index++) {
-		tmp = items[index].split("=");
+	location.search
+	.substr(1)
+	.split("&")
+	.forEach(function (item) {
+		tmp = item.split("=");
 		if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-	}
+	});
 	return result;
+}
+
+// Date difference calculations
+Date.dateDiff = function(interval, diff) {
+	let second = 1000,
+		minute = second * 60,
+		hour = minute * 60,
+		day = hour * 24,
+		week = day * 7;
+
+	diff = Math.abs(diff);
+
+	switch (interval) {
+		case 's': return Math.floor(diff / second);
+		case 'm': return Math.floor(diff / minute);
+		case 'h': return Math.floor(diff / hour);
+		case 'd': return Math.floor(diff / day);
+		case 'w': return Math.floor(diff / week);
+		default: return diff;
+	}
 };
 
-Date.dateDiff = function(datepart, diff) {
-	datepart = datepart.toLowerCase();
-	let divideBy = {
-		w: 604800000,
-		d: 86400000,
-		h: 3600000,
-		m: 60000,
-		s: 1000
-	};
-
-	return Math.floor(diff / divideBy[datepart]);
-};
