@@ -13,14 +13,7 @@ app.controller("DmController", function ($scope, $compile) {
   const d = this;
 
   // Initialize Firebase
-  const configDb = {
-    apiKey: "AIzaSyCPrwHHgupU8jXdlnuulh9_yTYn-Ry2Gqc",
-    authDomain: "nudrum-app.firebaseapp.com",
-    databaseURL: "https://nudrum-app.firebaseio.com",
-    projectId: "nudrum-app",
-    storageBucket: "nudrum-app.appspot.com",
-    messagingSenderId: "1098853194105"
-  };
+  const configDb = window.appConfig.firebase
 
   firebase.initializeApp(configDb);
 
