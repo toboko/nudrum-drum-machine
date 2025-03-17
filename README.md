@@ -96,6 +96,7 @@ On the left:
 1. **Mute** - Toggle instrument sound on/off
 
 On the right:
+
 2. **Cut** - Clear the pattern
 3. **Copy** - Copy the pattern
 4. **Paste** - Paste a copied pattern
@@ -205,10 +206,9 @@ npm start
 
 ### Known Issues
 
-- **Attack doesn't work after the first playback of a sound in Chrome**
+- Attack doesn't work after the first playback of a sound in Chrome
 - This is a known issue with the Pizzicato library: [Issue #80](https://github.com/alemangui/pizzicato/issues/80)
-
-- **Audio timing issues in background tabs**
+- Audio timing issues in background tabs
 - The app implements periodic resyncing to maintain timing accuracy
 
 ### Common Solutions
@@ -234,4 +234,4 @@ NuDrum is hosted on [Google Firebase](https://firebase.google.com/) services.
 
 Copyright © 2018-2025 All rights reserved by Nicola Bombaci
 
-NuDrum is under Academic Free License 3.0 [(AFL3)](https://tldrlegal.com/license/academic-free-license-3.0-(afl)
+NuDrum is under Academic Free License 3.0 [(AFL3)](https://tldrlegal.com/license/academic-free-license-3.0-(afl))
