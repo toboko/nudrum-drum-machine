@@ -385,7 +385,7 @@ input, select {
   margin-top: 25px;
   position: relative;
   margin-bottom: 20vh;
-
+  overflow: hidden;
 }
 .line-inst {
   width: 65vw;
