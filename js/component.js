@@ -101,7 +101,6 @@ app.controller("DmController", function ($scope, $compile) {
   let lstTempo = -1;
   let avgTempo = [0, 0, 0, 0, 0, 0];
 
-  d.trkOn = null; // index track selected
   d.sampleOn = '';
   d.tempo = DEFAULTTEMPO;
   d.plyTxt = document.getElementById('play');
@@ -638,34 +637,11 @@ app.controller("DmController", function ($scope, $compile) {
   $scope.delete = function (inst) {
     d.pattern.splice(inst, 1);
     d.samples.splice(inst, 1)
-    d.trkOn = 0;
 
     if (d.pattern.length === 0) {
-      $scope.closeEditArea();
       d.maxoffset = 64;
     }
     $scope.updateStepsRoot()
-  };
-
-  $scope.select = function (inst) {
-    if (inst !== null) {
-      if (d.trkOn !== inst) {
-        document.getElementById('edit-set-' + inst).style.display = 'grid';
-        d.trkOn = inst;
-      } else {
-        d.trkOn = null;
-      }
-    } else {
-      d.trkOn = null;
-    }
-  };
-
-  $scope.closeEditArea = function () {
-    let el = document.getElementById('edit-area');
-    el.classList.add('slide-left');
-    setTimeout(function () {
-      el.style.display = 'none';
-    }, 50);
   };
 
   $scope.closeNavigateArea = function () {

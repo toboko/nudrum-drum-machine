@@ -125,11 +125,11 @@
           <!-- Tools Area -->
           <div id="tool-set-{{instIndex}}" class="box-label template-1">
             <p class="grid-area-c mute" ng-click="mute(instIndex)"><i class="fas fa-volume-up"></i></p>
-            <p class="grid-area-a name">{{inst.inst.text}} <small>{{inst.beat.id}}|{{d.maxoffset}}</small></p>
+            <p class="grid-area-a name">{{inst.inst.text}}</p>
             <p class="grid-area-d clear" ng-click="clear(instIndex)"><i class="fas fa-cut"></i></p>
             <p class="grid-area-e clear" ng-click="copy(instIndex)"><i class="fas fa-copy"></i></p>
             <p class="grid-area-f clear" ng-click="paste(instIndex)"><i class="fas fa-paste"></i></p>
-            <p class="grid-area-g click" data-ng-click="delete()"><i class="fas fa-trash"></i></p>
+            <p class="grid-area-g click" data-ng-click="delete(instIndex)"><i class="fas fa-trash"></i></p>
           </div>
 
           <!-- Edit Area -->
