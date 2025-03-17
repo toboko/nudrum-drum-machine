@@ -449,13 +449,20 @@ app.controller("DmController", function ($scope, $compile) {
   $scope.incTempo = function (inc) {
     let xT = d.tempo;
     xT = inc ? (xT += 1) : (xT -= 1);
-    d.tempo = xT;
+
+    // Only resync if tempo actually changed
+    if (d.tempo !== xT) {
+      d.tempo = xT;
+
+      // If we're playing, resync the tempo
+      if (playing) {
+        $scope.resyncTempo();
+      }
+    }
   };
 
   /* Edit Functions
-
-
-
+   *
    */
 
   $scope.setBeat = function (inc, inst) {
@@ -902,6 +909,13 @@ app.controller("DmController", function ($scope, $compile) {
       if (!playing) {
         // STOP
 
+        // reset timing references
+        $scope.lastScheduledTime = null;
+        $scope.scheduledBeats = 0;
+        $scope.audioContextStartTime = null;
+        $scope.performanceTimeAtStart = null;
+        $scope.lastResyncTime = 0;
+
         // reset indexClock
         idxClk = 1;
         // reset instrument clock
@@ -921,6 +935,13 @@ app.controller("DmController", function ($scope, $compile) {
       } else {
         // PLAY
 
+        // Initialize timing references
+        $scope.lastScheduledTime = window.performance.now();
+        $scope.scheduledBeats = 0;
+        $scope.audioContextStartTime = null;
+        $scope.performanceTimeAtStart = null;
+        $scope.lastResyncTime = Date.now();
+
         // check instruments volume
         $scope.checkMix();
         // play loop
@@ -931,30 +952,96 @@ app.controller("DmController", function ($scope, $compile) {
       }
     } else {
       toastr.warning('Samples are loading', 'Loading')
-
     }
   };
 
+  // Variable to track the last resync time
+  $scope.lastResyncTime = 0;
+
   $scope.play = function () {
-    // playing sounds
+    // Check if we need to do a periodic resync (every 30 seconds)
+    const currentTime = Date.now();
+    if (currentTime - $scope.lastResyncTime > 30000) { // 30 seconds
+      $scope.resyncTempo();
+      $scope.lastResyncTime = currentTime;
+    }
+
+    // Check if document is visible - handle tab switching
+    const isTabActive = !document.hidden;
+
+    // Pre-calculate which instruments need to be played this cycle
+    const instrumentsToPlay = [];
+
+    // Determine which instruments should play on this beat (pre-filtering)
     d.pattern.forEach(function (value, inst) {
-
       // clock is in time with beat rate
-      if (idxClk % value.beat.id === 1) {
-        $scope.playInst(inst, d.pattern[inst]);
-
-      } else if (value.beat.id === 1) {
-        $scope.playInst(inst, d.pattern[inst]);
+      if (idxClk % value.beat.id === 1 || value.beat.id === 1) {
+        instrumentsToPlay.push({inst, pattern: value});
       }
     });
+
+    // Batch process only the instruments that need to play
+    if (instrumentsToPlay.length > 0) {
+      // If audio context is suspended, try to resume it
+      if (Pizzicato && Pizzicato.context && Pizzicato.context.state === 'suspended') {
+        Pizzicato.context.resume().catch(function (err) {
+          console.warn('Could not resume audio context:', err);
+        });
+      }
+
+      // Process all instruments that need to play
+      instrumentsToPlay.forEach(function (item) {
+        $scope.playInst(item.inst, item.pattern);
+      });
+    }
 
     // inc global clock value
     idxClk = normal((idxClk + 1), d.maxoffset);
 
-    // timeout loop
+    // Calculate next beat delay based on tempo
+    const nextBeatDelay = (d.beat[1].ms) / d.tempo;
+
+    // Initialize or update our timing reference
+    if (!$scope.lastScheduledTime) {
+      $scope.lastScheduledTime = window.performance.now();
+      $scope.scheduledBeats = 0;
+    }
+
+    // Calculate the next beat time based on a consistent reference point
+    $scope.scheduledBeats++;
+    const idealNextBeatTime = $scope.lastScheduledTime + ($scope.scheduledBeats * nextBeatDelay);
+    const currentTimeNow = window.performance.now();
+
+    // Calculate how much time until the next beat should play
+    let timeUntilNextBeat = idealNextBeatTime - currentTimeNow;
+
+    // If we're significantly behind schedule (more than half a beat), we need to catch up
+    if (timeUntilNextBeat < -nextBeatDelay / 2) {
+      // Reset our timing reference to avoid skipping too many beats
+      $scope.lastScheduledTime = currentTimeNow;
+      $scope.scheduledBeats = 0;
+      timeUntilNextBeat = 0;
+    } else if (timeUntilNextBeat < 0) {
+      // We're a little behind, play immediately
+      timeUntilNextBeat = 0;
+    }
+
+    // Use the most appropriate timing mechanism
+    if (!isTabActive) {
+      // For background tabs, use the audio context's clock when possible
+      if (Pizzicato && Pizzicato.context && Pizzicato.context.state === 'running') {
+        // Store audio context time for sync purposes
+        if (!$scope.audioContextStartTime) {
+          $scope.audioContextStartTime = Pizzicato.context.currentTime;
+          $scope.performanceTimeAtStart = window.performance.now();
+        }
+      }
+    }
+    // Schedule the next beat
     toutPly = window.setTimeout(function () {
       $scope.play();
-    }, (d.beat[1].ms) / d.tempo);
+    }, timeUntilNextBeat);
+
   };
 
   // Play the single instrument in own beat tempo
@@ -963,24 +1050,34 @@ app.controller("DmController", function ($scope, $compile) {
     let view = element.view;
 
     let tcycle = normal(element.clock, view);    // Identify when a cycle finished
-    let tbeat = normal(element.clock, beat); 	 // Identify the clock position on the steps
+    let tbeat = normal(element.clock, beat);     // Identify the clock position on the steps
 
-
+    // Only attempt to play if there's a step to play
     if (element.steps[tbeat - 1]) {
-      if (element.inst.audio.playing) {
-        element.inst.audio.stop();
+      // Play the audio
+      if (element.inst.audio) {
+        if (element.inst.audio.playing) {
+          element.inst.audio.stop();
+        }
+        element.inst.audio.play();
       }
-      // Play sample
-      element.inst.audio.play();
     }
 
-    if ((tcycle === 1) && (element.cycle !== 0) && (view !== beat)) {
-      // Update UI
-      $scope.updateStepsRoot(inst);
-    }
+    // Update UI only if tab is active to save resources
+    if (!document.hidden) {
+      // Update visual indicators
+      if ((tcycle === 1) && (element.cycle !== 0) && (view !== beat)) {
+        // Use requestAnimationFrame for smoother UI updates
+        requestAnimationFrame(function () {
+          $scope.updateStepsRoot(inst);
+        });
+      }
 
-    // select clock step on instrument line steps
-    $scope.upClock(inst, tbeat);
+      // Update clock position indicator
+      requestAnimationFrame(function () {
+        $scope.upClock(inst, tbeat);
+      });
+    }
 
     // inc clock instrument value
     element.clock = (element.clock += 1);
@@ -996,9 +1093,7 @@ app.controller("DmController", function ($scope, $compile) {
         rshft(element.steps, view);
       }
     }
-
   };
-
 
   $scope.newInst = function () {
     let name = document.getElementById('inst-new-name').value;
@@ -1136,9 +1231,76 @@ app.controller("DmController", function ($scope, $compile) {
   };
 
   $scope.$on('onRepeatLast', function (scope, element, attrs) {
-    // Do some stuffs here
     let inst = parseInt(element[0].parentElement.parentElement.getAttribute('id').substr(5));
     $scope.updateStepsRoot(inst)
+  });
+
+  $scope.resyncTempo = function () {
+    // Reset timing references
+    $scope.lastScheduledTime = window.performance.now();
+    $scope.scheduledBeats = 0;
+    $scope.audioContextStartTime = null;
+    $scope.performanceTimeAtStart = null;
+
+    // Also resync visuals
+    $scope.resyncAudioAndVisuals();
+  };
+
+  $scope.resyncAudioAndVisuals = function () {
+    // Only do something if we're playing
+    if (!playing) return;
+
+    // Force update all visual indicators
+    requestAnimationFrame(function () {
+      d.pattern.forEach(function (pattern, inst) {
+        const beat = pattern.beat.offset;
+        const tbeat = normal(pattern.clock, beat);
+        $scope.upClock(inst, tbeat);
+      });
+
+      // Update all step indicators
+      $scope.updateStepsRoot();
+    });
+  };
+
+  // Add this function to your controller
+  $scope.debugResync = function () {
+    if (playing) {
+      console.log("Performing manual resync of tempo and visuals");
+      $scope.resyncTempo();
+      toastr.info('Tempo and visuals resynced', 'Debug');
+    } else {
+      console.log("Not currently playing - nothing to resync");
+      toastr.warning('Not currently playing', 'Debug');
+    }
+  };
+
+  // Make it available globally for console debugging
+  window.debugResync = function () {
+    angular.element(document.querySelector('[ng-controller="DmController"]')).scope().debugResync();
+  };
+
+  // This will handle tab visibility changes
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && playing) {
+      // Tab is now visible again and we were playing
+      // Resume audio context if it was suspended
+      if (Pizzicato && Pizzicato.context && Pizzicato.context.state === 'suspended') {
+        Pizzicato.context.resume().then(function () {
+          console.log('Audio context resumed after tab became visible');
+        }).catch(function (err) {
+          console.warn('Could not resume audio context:', err);
+        });
+      }
+
+      // Call resyncTempo to reset timing references and update visuals
+      $scope.resyncTempo();
+
+      // Apply the changes since this is outside Angular's digest cycle
+      if (!$scope.$$phase) {
+        $scope.$apply();
+      }
+    }
   });
 });
 
