@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "nudrum-app"
+  },
+  "targets": {
+    "nudrum-app": {
+      "hosting": {
+        "default": [
+          "nudrum"
+        ],
+        "redirect": [
+          "nudrum-app"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

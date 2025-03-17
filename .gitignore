@@ -1,0 +1,12 @@
+\.idea/
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Environment configuration
+.env
+js/config.js
+
+# Node
+node_modules/

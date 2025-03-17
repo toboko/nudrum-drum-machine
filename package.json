@@ -1,0 +1,21 @@
+{
+  "name": "NuDrum",
+  "author": {
+    "name": "Nicola Bombaci",
+    "url": "https://github.com/toboko/nudrum-drum-machine"
+  },
+  "version": "1.1.0",
+  "main": "electron/index.js",
+  "scripts": {
+    "play": "cd electron && npm start",
+    "lite": "lite-server --port 10001",
+    "start": "npm run lite",
+    "generate-config": "node build/generate-config.js",
+    "prebuild": "npm run generate-config",
+    "deploy": "firebase deploy"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "lite-server": "^1.3.1"
+  }
+}

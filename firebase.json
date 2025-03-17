@@ -1,0 +1,50 @@
+{
+  "hosting": [{
+    "target": "default",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.template",
+      "build/**",
+      ".env"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|html|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          }
+        ]
+      },
+      {
+        "source": "js/config.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      }
+    ]
+  }, {
+    "target": "redirect",
+    "public": "redirect",
+    "redirects": [
+      {
+        "source": "**",
+        "destination": "https://nudrum.web.app/",
+        "type": 301
+      }
+    ]
+  }]
+}

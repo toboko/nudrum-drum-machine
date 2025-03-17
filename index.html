@@ -1,0 +1,193 @@
+<!doctype html>
+<html data-ng-app="drummachineApp">
+<head>
+  <link rel="stylesheet" href="css/fontawesome.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/toastr.min.css">
+  <script>if (typeof module === 'object') {
+    window.module = module;
+    module = undefined;
+  }</script>
+  <script src="js/lib/jquery-3.3.1.min.js"></script>
+  <script src="js/lib/md5.min.js"></script>
+  <script src="js/lib/pizzicato.min.js"></script>
+  <script src="js/lib/angular.min.js"></script>
+  <script src="js/lib/toastr.min.js"></script>
+  <script src="js/lib/math.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-database.js"></script>
+  <script src="js/functions.js"></script>
+  <script src="js/event-listener.js"></script>
+  <script src="js/config.js?v=1"></script>
+  <script src="js/component.js?v=4"></script>
+  <script>if (window.module) module = window.module;</script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta charset="utf-8">
+  <meta name="msapplication-TileColor" content="#00aba9">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description"
+        content="The project aims to create a polirhythmic and polymetric drum machine, through a responsive web interface. These features are limiting to all the instruments available on a drum machine">
+  <meta name="googlebot" content="index">
+  <title>NuDrum</title>
+
+</head>
+<body data-ng-controller="DmController as d" class="fade">
+
+<div id="navigate" class="slide-right" style="display: none;">
+  <div id="folders" class="grid-area-a"></div>
+  <div id="samples" class="grid-area-b"></div>
+  <div id="close-navigate-area" class="grid-area-c">
+    <p data-ng-click="closeNavigateArea()" class="click"><i class="fas fa-times"></i> CLOSE</p>
+    <p class="click"><a target="_blank" href="https://github.com/toboko/nudrum-drum-machine#user-content-storages-rules"><i
+      class="fas fa-info-circle"></i> RULES</a></p>
+  </div>
+</div>
+<div id="share-dialog" style="display: none;">
+  <div class="share-dialog-content">
+    <div class="share-dialog-header">
+      <h3>Share Your Pattern</h3>
+      <button class="close-button" ng-click="closeShareDialog()">&times;</button>
+    </div>
+
+    <p>Copy this link to share your pattern:</p>
+    <div class="share-url-container">
+      <input id="share-url-input" type="text" readonly>
+      <button id="copy-url-button" ng-click="copyShareUrl()">Copy</button>
+    </div>
+
+    <p>Or share directly:</p>
+    <div class="social-share-buttons">
+      <!-- Social sharing links will be dynamically updated with correct URLs -->
+      <a id="x-share" class="social-button x-share" target="_blank">
+        <i class="fab fa-x"></i>
+      </a>
+      <a id="facebook-share" class="social-button facebook-share" target="_blank">
+        <i class="fab fa-facebook-f"></i> Facebook
+      </a>
+      <a id="linkedin-share" class="social-button linkedin-share" target="_blank">
+        <i class="fab fa-linkedin-in"></i> LinkedIn
+      </a>
+      <a id="whatsapp-share" class="social-button whatsapp-share" target="_blank">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </a>
+      <a id="email-share" class="social-button email-share" href="#">
+        <i class="fas fa-envelope"></i> Email
+      </a>
+    </div>
+  </div>
+</div>
+<div id="control-area">
+  <div class="grid-area-a">
+    <div id="play" class="fa fa-play click" data-ng-click="startLoop()"></div>
+    <div id="minus-tempo" class="fas fa-minus tempo click" data-ng-click="incTempo(false)"></div>
+    <div id="line-tempo">
+      <div class="title">
+        <span>{{d.tempo}} <small>BPM</small></span>
+      </div>
+    </div>
+    <div id="plus-tempo" class="fas fa-plus tempo click" data-ng-click="incTempo(true)"></div>
+    <div id="tap" class="fa fa-drum click" data-ng-click="detectTempo()"></div>
+    <div id="share-button" class="fas fa-share-alt" ng-click="sharePattern()"></div>
+  </div>
+</div>
+<div id="tap-indicator">TAP</div>
+<div id="copy-area">
+  <div class="grid-area-a">
+    <div id="app-name"><p>NuDrum - Drum Machine</p></div>
+  </div>
+  <div class="grid-area-c">
+      <div id="credit-area"><p><a href="https://github.com/toboko/nudrum-drum-machine"><i class="fab fa-github"></i> Made by @toboko</a></p></div>
+  </div>
+</div>
+<div id="surface">
+  <div id="browse-area">
+    <div id="latest-pattern-container">
+      <div id="latest-pattern"></div>
+    </div>
+  </div>
+  <div id="window">
+    <div id="main-area">
+      <div class="line-insts">
+        <div id="inst-new" class="line-inst line-inst-margin-top line-inst-padding">
+          <div id="set-{{d.instruments.length}}" class="box-label template-1" data-ng-click="newInst()">
+            <p class="grid-area-c fas fa-plus open-set"></p>
+            <p class="grid-area-a name">New Instrument</p>
+          </div>
+          <div class="line-steps line-steps-height">
+            <div class="inst-new-par step-height">
+              <input id="inst-new-name" aria-label="inst-new-name" type="text" placeholder="Name"/>
+            </div>
+            <div id="browse-new-sample" class="inst-new-par step-height">
+              <strong class="click" data-ng-click="openNavigateArea()">Sound Library <i class="fas fa-folder-open"></i></strong><br>
+              <small>{{d.sampleOn}}</small>
+            </div>
+          </div>
+        </div>
+        <div id="inst-{{$index}}" class="line-inst line-inst-margin-top line-inst-padding"
+             data-ng-repeat="inst in d.pattern track by $index"
+             ng-init="instIndex = $index">
+          <div class="fa-2x"><i class="fas fa-spinner fa-spin"></i></div>
+
+          <!-- Tools Area -->
+          <div id="tool-set-{{instIndex}}" class="box-label template-1">
+            <p class="grid-area-c mute" ng-click="mute(instIndex)"><i class="fas fa-volume-up"></i></p>
+            <p class="grid-area-a name">{{inst.inst.text}}</p>
+            <p class="grid-area-d clear" ng-click="clear(instIndex)"><i class="fas fa-cut"></i></p>
+            <p class="grid-area-e clear" ng-click="copy(instIndex)"><i class="fas fa-copy"></i></p>
+            <p class="grid-area-f clear" ng-click="paste(instIndex)"><i class="fas fa-paste"></i></p>
+            <p class="grid-area-g click" data-ng-click="delete(instIndex)"><i class="fas fa-trash"></i></p>
+          </div>
+
+          <!-- Edit Area -->
+          <div id="edit-set-{{instIndex}}" class="box-label template-2">
+            <p class="grid-area-a">
+              Volume
+              <i class="fas fa-caret-up" data-ng-click="setVolume(true, instIndex)"></i>
+              <small class="value">{{d.pattern[instIndex].inst.vol}}</small>
+              <i class="fas fa-caret-down" data-ng-click="setVolume(false, instIndex)"></i>
+            </p>
+            <p class="grid-area-b">
+              Offset
+              <i class="fas fa-caret-up" data-ng-click="setOffset(true, instIndex)"></i>
+              <small class="value">{{d.pattern[instIndex].view}}</small>
+              <i class="fas fa-caret-down" data-ng-click="setOffset(false, instIndex)"></i>
+            </p>
+            <p class="grid-area-c">
+              Beat
+              <i class="fas fa-caret-up" data-ng-click="setBeat(true, instIndex)"></i>
+              <small class="value">{{d.pattern[instIndex].beat.id}}</small>
+              <i class="fas fa-caret-down" data-ng-click="setBeat(false, instIndex)"></i>
+            </p>
+            <p class="grid-area-d">
+              Shift
+              <i class="fas fa-caret-up" data-ng-click="shift(true, instIndex)"></i>
+              <small class="value">{{d.pattern[instIndex].shift}}</small>
+              <i class="fas fa-caret-down" data-ng-click="shift(false, instIndex)"></i>
+            </p>
+
+          </div>
+
+          <!-- Steps Area -->
+          <div class="line-steps line-steps-height beat-{{inst.beat.offset}}">
+            <div data-ng-repeat="step in inst.steps track by $index"
+                 ng-init="stepIndex = $index"
+                 data-ng-click="selectStep(instIndex, stepIndex)"
+                 id="step-{{stepIndex + 1}}"
+                 class="button-step step-height"
+                 on-last-repeat>
+              <span class="number">{{stepIndex + 1}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
