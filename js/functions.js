@@ -8,10 +8,8 @@ const randomBool = function() {
 	return possible[Math.floor(Math.random() * possible.length)] === 1;
 };
 
-const short = function() {
-	let out = [],
-		str,
-		min = 5;
+const short = function(min= 5 ) {
+	let out = [], str;
 
 	for (let i = 0; i < min; i++) {
 		str = randomCharacter();
