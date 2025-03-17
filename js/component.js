@@ -443,6 +443,15 @@ app.controller("DmController", function ($scope, $compile) {
     avgTempo[lstTempo] = 0;
 
     if (avg) d.tempo = (Math.trunc(60000 / avg));
+
+    // Show and fade the tap indicator
+    const tapIndicator = document.getElementById('tap-indicator');
+    tapIndicator.classList.add('visible');
+
+    // Remove the visible class after a short delay to trigger the fade out
+    setTimeout(function() {
+      tapIndicator.classList.remove('visible');
+    }, 300);
   };
 
   $scope.incTempo = function (inc) {
