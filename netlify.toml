@@ -1,0 +1,31 @@
+# Settings for your Netlify deployment
+[build]
+publish = "."
+command = "npm run build"
+
+# Handle SPA routing
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+# Cache settings similar to your Firebase configuration
+[[headers]]
+for = "**/*.js"
+[headers.values]
+Cache-Control = "max-age=3600"
+
+[[headers]]
+for = "**/*.html"
+[headers.values]
+Cache-Control = "max-age=3600"
+
+[[headers]]
+for = "**/*.css"
+[headers.values]
+Cache-Control = "max-age=3600"
+
+[[headers]]
+for = "/js/config.js"
+[headers.values]
+Cache-Control = "no-cache, no-store, must-revalidate"

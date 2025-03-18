@@ -11,8 +11,9 @@
     "lite": "lite-server --port 10001",
     "start": "npm run lite",
     "generate-config": "node build/generate-config.js",
-    "prebuild": "npm run generate-config",
-    "deploy": "firebase deploy"
+    "build": "npm run generate-config",
+    "deploy-firebase": "firebase deploy",
+    "deploy-netlify": "netlify deployt --prof"
   },
   "dependencies": {
     "electron": "^5.0.4",

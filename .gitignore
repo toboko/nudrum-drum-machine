@@ -10,3 +10,5 @@ js/config.js
 
 # Node
 node_modules/
+# Local Netlify folder
+.netlify

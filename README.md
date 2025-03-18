@@ -16,14 +16,27 @@
   - [Standalone Application](#standalone-application)
 - [User Guide](#user-guide)
   - [Instrument Controls](#instrument-controls)
+  - [Edit Controls](#edit-controls)
   - [Beat Controls](#beat-controls)
+  - [Main Controls](#main-controls)
   - [Creating New Instruments](#creating-new-instruments)
   - [Sharing Patterns](#sharing-patterns)
 - [Technical Information](#technical-information)
   - [Storage Rules](#storage-rules)
   - [Development Setup](#development-setup)
   - [Available Scripts](#available-scripts)
+- [Project Deployment Guide](#project-deployment-guide)
+  - [Prerequisites](#prerequisites)
+  - [Environment Setup](#environment-setup)
+  - [Configuration Generation](#configuration-generation)
+  - [Firebase Deployment](#firebase-deployment)
+  - [Netlify Deployment](#netlify-deployment)
+  - [Environment Variables in Netlify](#environment-variables-in-netlify)
+  - [Project Structure](#project-structure)
+  - [Notes](#notes)
 - [Troubleshooting](#troubleshooting)
+  - [Known Issues](#known-issues)
+  - [Common Solutions](#common-solutions)
 - [Credits](#credits)
 - [License](#license)
 
@@ -201,6 +214,170 @@ npm start
 - `npm start` - Alias for npm run lite
 - `npm run generate-config` - Generate configuration files
 - `npm run deploy` - Deploy to Firebase
+
+## Project Deployment Guide
+
+This document provides instructions for deploying this project to both Firebase and Netlify.
+
+### Prerequisites
+
+- Firebase CLI and/or Netlify CLI (for command-line deployments)
+- A Firebase project and/or Netlify account
+
+### Environment Setup
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+API_KEY=your_api_key
+AUTH_DOMAIN=your_auth_domain
+DATABASE_URL=your_database_url
+PROJECT_ID=your_project_id
+STORAGE_BUCKET=your_storage_bucket
+MESSAGING_SENDER_ID=your_messaging_sender_id
+```
+
+### Configuration Generation
+
+Before deploying, you need to generate the `config.js` file from your environment variables:
+
+```bash
+node build/generate-config.js
+```
+
+This script reads from `js/config.js.template` and replaces placeholders with your environment variables.
+
+### Firebase Deployment
+
+#### Setup
+
+1. Install Firebase CLI:
+   ```bash
+   npm install -g firebase-tools
+   ```
+
+2. Login to Firebase:
+   ```bash
+   firebase login
+   ```
+
+3. Initialize Firebase (if not already done):
+   ```bash
+   firebase init
+   ```
+
+#### Deploy
+
+1. Generate the config file:
+   ```bash
+   npm run build
+   ```
+
+2. Deploy to Firebase:
+   ```bash
+   npm run deploy-firebase
+   ```
+
+For deploying specific targets:
+```bash
+firebase deploy --only hosting:default
+firebase deploy --only hosting:redirect
+```
+
+### Netlify Deployment
+
+#### Setup
+
+1. Create a `netlify.toml` file:
+   ```toml
+   [build]
+     publish = "."
+     command = "npm run build"
+
+   [[redirects]]
+     from = "/*"
+     to = "/index.html"
+     status = 200
+
+   [[headers]]
+     for = "**/*.js"
+     [headers.values]
+       Cache-Control = "max-age=3600"
+
+   [[headers]]
+     for = "**/*.html"
+     [headers.values]
+       Cache-Control = "max-age=3600"
+
+   [[headers]]
+     for = "**/*.css"
+     [headers.values]
+       Cache-Control = "max-age=3600"
+
+   [[headers]]
+     for = "/js/config.js"
+     [headers.values]
+       Cache-Control = "no-cache, no-store, must-revalidate"
+   ```
+
+#### Deploy via Netlify UI
+
+1. Go to [app.netlify.com](https://app.netlify.com/)
+2. Click "New site from Git"
+3. Connect to your Git provider
+4. Select your repository
+5. Configure build settings:
+- Build command: `npm run build`
+- Publish directory: `.`
+6. Click "Deploy site"
+
+#### Deploy via Netlify CLI
+
+1. Install Netlify CLI:
+   ```bash
+   npm install -g netlify-cli
+   ```
+
+2. Login to Netlify:
+   ```bash
+   netlify login
+   ```
+
+3. Initialize your site:
+   ```bash
+   netlify init
+   ```
+
+4. Deploy your site:
+   ```bash
+   netlify deploy --prod
+   ```
+
+### Environment Variables in Netlify
+
+1. Go to your Netlify dashboard
+2. Navigate to your site
+3. Go to Site settings > Build & deploy > Environment
+4. Add each environment variable:
+- API_KEY
+- AUTH_DOMAIN
+- DATABASE_URL
+- PROJECT_ID
+- STORAGE_BUCKET
+- MESSAGING_SENDER_ID
+
+### Project Structure
+
+- `js/config.js.template`: Template for Firebase configuration
+- `build/generate-config.js`: Script to generate config from environment variables
+- `firebase.json`: Firebase configuration
+- `netlify.toml`: Netlify configuration
+
+### Notes
+
+- The `config.js` file is generated during the build process and should not be committed to version control
+- Both Firebase and Netlify deployments use the same config generation process
+- The `.env` file should not be committed to version control
 
 ## Troubleshooting
 
